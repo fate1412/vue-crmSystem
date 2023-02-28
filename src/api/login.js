@@ -1,12 +1,12 @@
 import request from '@/utils/request'
 
-export function login(loginInfo) {
+export function login(account,password) {
   return request({
     url: '/user/login',
     method: 'post',
-    data: loginInfo,
-    headers:{
-      'Content-Type':'application/x-www-form-urlencoded'
+    data: {
+      account: account,
+      password: password
     }
   })
 }

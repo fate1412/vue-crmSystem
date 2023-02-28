@@ -5,20 +5,20 @@
       <el-table-column type="selection" width="55"></el-table-column>
 
       <el-table-column v-for="(column,index) in tableColumns" :key="index" align="center" :label="column.title"
-                       width="95" :prop="column.name" :fixed="column.fixed" >
-                <template slot-scope="scope">
-                  <el-link v-if="column.fixed" :underline="false"
-                           style="color: deepskyblue" @click="getDetails(scope.row[column.name])">
-                    {{ scope.row[column.name] }}
-                  </el-link>
-                  <el-link v-else-if="column.link" :underline="false"
-                           style="color: deepskyblue" @click="getDetails(scope.row[column.name].id,scope.row[column.name].tableName)">
-                    {{ scope.row[column.name].name }}
-                  </el-link>
-                  <div v-else>{{ scope.row[column.name] }}</div>
-                </template>
+                       width="95" :prop="column.name" :fixed="column.fixed">
+        <template slot-scope="scope">
+          <el-link v-if="column.fixed" :underline="false"
+                   style="color: deepskyblue" @click="getDetails(scope.row[column.name])">
+            {{ scope.row[column.name] }}
+          </el-link>
+          <el-link v-else-if="column.link" :underline="false"
+                   style="color: deepskyblue"
+                   @click="getDetails(scope.row[column.name].id,scope.row[column.name].tableName)">
+            {{ scope.row[column.name].name }}
+          </el-link>
+          <div v-else>{{ scope.row[column.name] }}</div>
+        </template>
       </el-table-column>
-
 
 
       <!--      <el-table-column align="center" label="ID" width="95">-->
@@ -67,7 +67,6 @@
     </div>
 
 
-
   </div>
 
 </template>
@@ -108,25 +107,20 @@ export default {
     fetchData(tableName) {
       this.listLoading = true
 
-      if (tableName === 'customer') {
-        getMainListByPage(tableName, this.page.thisPage, this.page.pageSize).then(response => {
-          console.log(response.data)
-          this.tableDataList = response.data.tableDataList;
-          this.tableColumns = response.data.tableColumns;
-          this.listLoading = false
-        })
-      } else {
-        getList(tableName).then(response => {
-          this.tableDataList = response.data.items
-          this.listLoading = false
-        })
-      }
+      getMainListByPage(tableName, this.page.thisPage, this.page.pageSize).then(response => {
+        console.log(response.data)
+        this.tableDataList = response.data.tableDataList;
+        this.tableColumns = response.data.tableColumns;
+        this.listLoading = false
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
+      this.page.pageSize = val;
+      this.fetchData(this.$route.name)
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
@@ -137,13 +131,13 @@ export default {
       const tableName = this.$route.name;
       this.fetchData(tableName);
     },
-    getDetails(id,tableName) {
-      tableName = tableName===undefined? this.$route.name : tableName;
-      console.log(id+'  '+tableName)
-      console.log("触发getDetails()")
+    getDetails(id, tableName) {
+      tableName = tableName === undefined ? this.$route.name : tableName;
+      console.log(id + '  ' + tableName)
       this.$router.push({
         name: 'Form',
         params: {
+          goBackName: this.$route.name,
           tableName: tableName,
           tableId: id
         }

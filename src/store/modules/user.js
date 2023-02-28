@@ -28,28 +28,24 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const data = { "token": "admin" }
-      setToken(data.token)
-      commit('SET_TOKEN', data.token)
+      // const data = { "token": "admin" }
+      // setToken(data.token)
+      // commit('SET_TOKEN', data.token)
 
-      // const loginInfo = qs.stringify({
-      //   account: userInfo.account,
-      //   password: userInfo.password
-      // })
-      // return new Promise((resolve, reject) => {
-      //   login(loginInfo).then(response => {
-      //     console.log(response)
-      //     const data = response.data
-      //     console.log(data.token)
-      //     setToken(data.token)
-      //
-      //     commit('SET_TOKEN', data.token)
-      //     resolve()
-      //   }).catch(error => {
-      //     console.log("111")
-      //     reject(error)
-      //   })
-      // })
+      return new Promise((resolve, reject) => {
+        login(userInfo.account,userInfo.password).then(response => {
+          console.log(response)
+          const data = response.data
+          console.log(data.token)
+          setToken(data.token)
+
+          commit('SET_TOKEN', data.token)
+          resolve()
+        }).catch(error => {
+          console.log("111")
+          reject(error)
+        })
+      })
     },
 
     // 获取用户信息

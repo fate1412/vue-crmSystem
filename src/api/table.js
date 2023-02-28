@@ -29,3 +29,21 @@ export function getMainTableById(tableName,id) {
     }
   })
 }
+
+export function updateMainTable(tableName,data) {
+  return request({
+    url: '/'+ tableName + '/update',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteMainTable(tableName,id) {
+  return request({
+    url: '/'+ tableName + '/delete',
+    method: 'delete',
+    data: {
+      id: id
+    }
+  })
+}
