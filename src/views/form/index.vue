@@ -4,80 +4,42 @@
       <el-button @click="goBack">返回</el-button>
     </div>
     <div style="display: flex;justify-content: right;margin-bottom: 20px">
-      <el-button type="primary" @click="editTable">{{ edit ? '提交' : '编辑' }}</el-button>
-      <el-button @click="cancelTable">{{ edit ? '取消' : '删除' }}</el-button>
+      <el-button type="primary" @click="saveTable">{{ create || edit ? '提交' : '编辑' }}</el-button>
+      <el-button @click="cancelTable">{{ create || edit ? '取消' : '删除' }}</el-button>
     </div>
 
 
     <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right">
       <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.title"
-                    style="width: 49%; min-width: 300px">
+                    v-if="!column.disabled || (!edit && !create)" style="width: 49%; min-width: 300px">
+        <!--        下拉选择框-->
         <el-select v-if="column.formType==='Select'" v-model="form[column.name]" :label="column.title"
                    :disabled="column.disabled || disabled" placeholder="请选择活动区域"></el-select>
-        <div v-else-if="column.formType==='Date'">
-          <el-col :span="11">
+        <!--        时间-->
+        <div v-else-if="column.formType==='Date' || column.formType==='DateTime'" style="width: 200%">
+          <el-col style="width: 41%">
             <el-date-picker type="date" placeholder="选择日期" v-model="form[column.name]"
                             :disabled="column.disabled || disabled" style="width: 100%;"></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
-          <el-col :span="11">
-            <el-time-picker placeholder="选择时间" v-model="form[column.name]"
-                            :disabled="column.disabled || disabled" style="width: 100%;"></el-time-picker>
-          </el-col>
+          <div v-if="column.formType==='DateTime'">
+            <el-col class="line" :span="2">-</el-col>
+            <el-col style="width: 40%">
+              <el-time-picker placeholder="选择时间" v-model="form[column.name]"
+                              :disabled="column.disabled || disabled" style="width: 100%;"></el-time-picker>
+            </el-col>
+          </div>
         </div>
 
-        <el-input v-else v-model="column.link? form[column.name].name : form[column.name]"
+        <el-input v-if="column.formType==='Input'" v-model="column.link? form[column.name].name : form[column.name]"
                   :disabled="column.disabled || disabled"/>
       </el-form-item>
 
-      <!--      <el-form-item label="Activity name">-->
-      <!--        <el-input v-model="form.name"/>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Activity zone">-->
-      <!--        <el-select v-model="form.region" placeholder="please select your zone">-->
-      <!--          <el-option label="Zone one" value="shanghai"/>-->
-      <!--          <el-option label="Zone two" value="beijing"/>-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Activity time">-->
-      <!--        <el-col :span="11">-->
-      <!--          <el-date-picker v-model="form.date1" type="date" placeholder="Pick a date" style="width: 100%;"/>-->
-      <!--        </el-col>-->
-      <!--        <el-col :span="2" class="line">-</el-col>-->
-      <!--        <el-col :span="11">-->
-      <!--          <el-time-picker v-model="form.date2" type="fixed-time" placeholder="Pick a time" style="width: 100%;"/>-->
-      <!--        </el-col>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Instant delivery">-->
-      <!--        <el-switch v-model="form.delivery"/>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Activity type">-->
-      <!--        <el-checkbox-group v-model="form.type">-->
-      <!--          <el-checkbox label="Online activities" name="type"/>-->
-      <!--          <el-checkbox label="Promotion activities" name="type"/>-->
-      <!--          <el-checkbox label="Offline activities" name="type"/>-->
-      <!--          <el-checkbox label="Simple brand exposure" name="type"/>-->
-      <!--        </el-checkbox-group>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Resources">-->
-      <!--        <el-radio-group v-model="form.resource">-->
-      <!--          <el-radio label="Sponsor"/>-->
-      <!--          <el-radio label="Venue"/>-->
-      <!--        </el-radio-group>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="Activity form">-->
-      <!--        <el-input v-model="form.desc" type="textarea"/>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item>-->
-      <!--        <el-button type="primary" @click="onSubmit">Create</el-button>-->
-      <!--        <el-button @click="onCancel">Cancel</el-button>-->
-      <!--      </el-form-item>-->
     </el-form>
   </div>
 </template>
 
 <script>
-import { getList, getMainTableById, updateMainTable, deleteMainTable } from '@/api/table'
+import { getList, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
 
 export default {
   data() {
@@ -93,25 +55,48 @@ export default {
           "name": "customerType",
           "fixed": false,
           "link": false,
-          "formType": "select",
+          "formType": "Select",
           "disabled": ""
         }
       ],
       disabled: true,
-      edit: false
+      edit: false,
+      create: true
     }
   },
   created() {
+    const params = this.$route.params
+    console.log("form")
     console.log(this.$route.params)
-    this.goBackName = this.$route.params.goBackName;
-    this.tableName = this.$route.params.tableName;
-    this.id = this.$route.params.tableId;
-    this.fetchData(this.tableName, this.id)
+    this.create = params.create === undefined ? true : params.create
+    this.goBackName = params.goBackName;
+    this.tableName = params.tableName;
+    this.id = params.tableId;
+    this.disabled = params.disabled === undefined ? true : params.disabled;
+    console.log(this.create)
+    if (this.create) {
+      this.getColumns(this.tableName)
+    } else {
+      this.fetchData(this.tableName, this.id)
+    }
   },
   methods: {
+    getColumns(tableName) {
+      this.listLoading = true
+      getColumns(tableName).then(response => {
+        this.tableColumns = response.data;
+        for (let i = 0; i < response.data.length; i++) {
+          if (response.data.link) {
+            this.form[response.data[i].name] = {}
+          }
+          this.form[response.data[i].name] = ""
+        }
+        console.log(this.form)
+        this.listLoading = false
+      })
+    },
     fetchData(tableName, id) {
       this.listLoading = true
-
       getMainTableById(tableName, id).then(response => {
         console.log(response.data)
         this.form = response.data.tableDataList[0];
@@ -124,9 +109,17 @@ export default {
         name: this.goBackName
       })
     },
-    editTable() {
+    saveTable() {
       this.listLoading = true
-      if (this.edit === true) {
+      if (this.create) {
+        //新增
+        addMainTable(this.tableName, this.form).then(response => {
+          this.$message('新增成功！')
+          this.listLoading = false
+          this.goBack();
+        })
+      } else if (this.edit) {
+        //编辑
         updateMainTable(this.tableName, this.form).then(response => {
           this.$message('修改成功')
           this.edit = !this.edit
@@ -143,7 +136,15 @@ export default {
       }
     },
     cancelTable() {
-      if (this.edit === true) {
+      if (this.create) {
+        this.open('是否取消创建?', () => {
+          this.$message({
+            type: 'success',
+            message: '已取消'
+          });
+          this.goBack();
+        });
+      } else if (this.edit) {
         this.edit = !this.edit
         this.disabled = !this.disabled
       } else {

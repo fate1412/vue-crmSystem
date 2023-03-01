@@ -20,6 +20,13 @@ export function getMainListByPage(tableName,thisPage,pageSize) {
   })
 }
 
+export function getColumns(tableName) {
+  return request({
+    url: '/'+ tableName + '/getColumns',
+    method: 'get'
+  })
+}
+
 export function getMainTableById(tableName,id) {
   return request({
     url: '/'+ tableName + '/select',
@@ -30,10 +37,18 @@ export function getMainTableById(tableName,id) {
   })
 }
 
+export function addMainTable(tableName,data) {
+  return request({
+    url: '/'+ tableName + '/add',
+    method: 'put',
+    data
+  })
+}
+
 export function updateMainTable(tableName,data) {
   return request({
     url: '/'+ tableName + '/update',
-    method: 'put',
+    method: 'post',
     data
   })
 }

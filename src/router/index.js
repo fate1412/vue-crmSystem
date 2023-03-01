@@ -86,6 +86,42 @@ export const constantRouterMap = [
             name: 'salesOrder',
             component: () => import('@/views/table/index'),
             meta: { title: '销售订单', icon: 'table' }
+          },
+          {
+            path: 'orderProduct',
+            name: 'orderProduct',
+            component: () => import('@/views/table/index'),
+            meta: { title: '订单产品', icon: 'table' }
+          },
+          {
+            path: 'invoice',
+            name: 'invoice',
+            component: () => import('@/views/table/index'),
+            meta: { title: '发货单', icon: 'table' }
+          },
+          {
+            path: 'invoiceProduct',
+            name: 'invoiceProduct',
+            component: () => import('@/views/table/index'),
+            meta: { title: '发货单产品', icon: 'table' }
+          },
+          {
+            path: 'product',
+            name: 'product',
+            component: () => import('@/views/table/index'),
+            meta: { title: '产品', icon: 'table' }
+          },
+          {
+            path: 'stockList',
+            name: 'stockList',
+            component: () => import('@/views/table/index'),
+            meta: { title: '备货单', icon: 'table' }
+          },
+          {
+            path: 'stockListProduct',
+            name: 'stockListProduct',
+            component: () => import('@/views/table/index'),
+            meta: { title: '备货单产品', icon: 'table' }
           }
         ]
       },

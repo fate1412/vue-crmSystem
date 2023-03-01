@@ -1,11 +1,17 @@
 <template>
   <div class="app-container">
+
+    <div style="display: flex;justify-content: right;margin-bottom: 20px">
+      <el-button type="primary" @click="createTable">{{ '新建' }}</el-button>
+      <el-button @click="deleteTable">{{ '删除' }}</el-button>
+    </div>
+
     <el-table v-loading="listLoading" :data="tableDataList" element-loading-text="Loading" border fit
-              height="650" @selection-change="handleSelectionChange">
+              height="600" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
 
       <el-table-column v-for="(column,index) in tableColumns" :key="index" align="center" :label="column.title"
-                       width="95" :prop="column.name" :fixed="column.fixed">
+                       :prop="column.name" :fixed="column.fixed">
         <template slot-scope="scope">
           <el-link v-if="column.fixed" :underline="false"
                    style="color: deepskyblue" @click="getDetails(scope.row[column.name])">
@@ -20,38 +26,6 @@
         </template>
       </el-table-column>
 
-
-      <!--      <el-table-column align="center" label="ID" width="95">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          {{ scope.$index }}-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column label="Title">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          {{ scope.row.title }}-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column label="Author" width="110" align="center">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          <span>{{ scope.row.author }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column label="Pageviews" width="110" align="center">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          {{ scope.row.pageviews }}-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column class-name="status-col" label="Status" width="110" align="center">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column align="center" prop="created_at" label="Display_time" width="200">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          <i class="el-icon-time"/>-->
-      <!--          <span>{{ scope.row.display_time }}</span>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
     </el-table>
     <div class="block">
 
@@ -139,9 +113,23 @@ export default {
         params: {
           goBackName: this.$route.name,
           tableName: tableName,
-          tableId: id
+          tableId: id,
+          create: false
         }
       })
+    },
+    createTable() {
+      this.$router.push({
+        name: 'Form',
+        params: {
+          goBackName: this.$route.name,
+          tableName: this.$route.name,
+          disabled: false
+        }
+      })
+    },
+    deleteTable() {
+
     }
   },
   watch: {
