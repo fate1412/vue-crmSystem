@@ -24,7 +24,19 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
-
+  {
+    path: '/form',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        name: 'Form',
+        component: () => import('@/views/form/index'),
+        meta: { title: 'Form', icon: 'form' }
+      }
+    ]
+  },
   {
     path: '/',
     component: Layout,
@@ -35,19 +47,6 @@ export const constantRouterMap = [
       path: '/dashboard',
       component: () => import('@/views/dashboard/index')
     }]
-  },
-  {
-    path: '/message',
-    component: Layout,
-    redirect: '/index',
-    children: [
-      {
-        path: 'index',
-        name: 'Message',
-        // component: () => import('@/views/form/index'),
-        meta: { title: '企信', icon: 'form' }
-      }
-    ]
   },
   {
     path: '/work',
@@ -159,20 +158,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
   {
     path: '/nested',
     component: Layout,
@@ -227,17 +212,6 @@ export const constantRouterMap = [
         path: 'menu2',
         component: () => import('@/views/nested/menu2/index'),
         meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
       }
     ]
   },
