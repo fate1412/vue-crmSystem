@@ -36,7 +36,9 @@ const user = {
         login(userInfo.username, userInfo.password).then(response => {
           console.log(response)
           const data = response.data
-          console.log(data.token)
+          // console.log(data.token)
+
+          // sessionStorage.setItem('authorities', JSON.stringify(data || '[]')) // 存储到session中
           setToken(data.token)
 
           commit('SET_TOKEN', data.token)

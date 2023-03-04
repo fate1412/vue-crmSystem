@@ -1,122 +1,136 @@
 <template>
   <div class="app-container">
-
-    <div style="display: flex;justify-content: right;margin-bottom: 20px">
-      <el-button type="primary" @click="createTable">{{ '新建' }}</el-button>
-      <el-button @click="deleteTable">{{ '删除' }}</el-button>
-    </div>
-
-    <el-table v-loading="listLoading" :data="tableDataList" element-loading-text="Loading" border fit
-              height="600" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
-
-      <el-table-column v-for="(column,index) in tableColumns" :key="index" align="center" :label="column.title"
-                       :prop="column.name" :fixed="column.fixed">
-        <template slot-scope="scope">
-          <el-link v-if="column.fixed" :underline="false"
-                   style="color: deepskyblue" @click="getDetails(scope.row[column.name])">
-            {{ scope.row[column.name] }}
-          </el-link>
-          <el-link v-else-if="column.link" :underline="false"
-                   style="color: deepskyblue"
-                   @click="getDetails(scope.row[column.name].id,scope.row[column.name].tableName)">
-            {{ scope.row[column.name].name }}
-          </el-link>
-          <div v-else>{{ scope.row[column.name] }}</div>
-        </template>
-      </el-table-column>
-
-    </el-table>
-    <div class="block">
-
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="page.thisPage"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="page.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="page.total">
-      </el-pagination>
-    </div>
-
-
+    <filter-pane :filter-data="filterData" @filterMsg="filterMsg"/>
+    <table-pane
+      :data-source="dataSource"
+      @changeSize="changeSize"
+      @changeNum="changeNum"
+    />
   </div>
-
 </template>
 
 <script>
-import { getList, getMainListByPage } from '@/api/table'
+import filterPane from '@/components/Table/filterPane'
+import tablePane from '@/components/Table/tablePane'
+// import { dynamicShareList } from '@/api/user'
+// import { timeFormat } from '@/filters/index'
+import { getMainListByPage } from '@/api/table'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
+  name: 'index',
+  components: { filterPane, tablePane },
   data() {
     return {
-      multipleSelection: [],
-      tableColumns: [],
-      tableDataList: null,
-      listLoading: true,
-      page: {
-        thisPage: 1,
-        total: 1,
-        pageSize: 20
-      }
-
+      // 搜索栏配置
+      filterData: {
+        timeSelect: false,
+        elinput: [
+          {
+            name: '客户ID',
+            width: 230,
+            key: 'id'
+          },
+          {
+            name: '客户名称',
+            width: 230,
+            key: 'name'
+          }
+        ]
+      },
+      // 表格配置
+      dataSource: {
+        tool: [{
+          name: '新增',
+          key: 1,
+          permission: 2010701,
+          handleClick: this.createTable,
+          bgColor: ''//自定义按钮背景色
+        }],
+        data: [], // 表格数据
+        cols: [], // 表格的列数据
+        handleSelectionChange: () => {
+        },
+        border: true,
+        isSelection: true, // 表格有多选时设置
+        isOperation: true, // 表格有操作列时设置
+        isIndex: false, // 列表序号
+        loading: true, // loading
+        pageData: {
+          total: 0, // 总条数
+          pageSize: 10, // 每页数量
+          pageNum: 1 // 页码
+        },
+        operation: {
+          // 表格有操作列时设置
+          label: '操作', // 列名
+          width: '100', // 根据实际情况给宽度
+          data: [ // 功能数组
+            {
+              type: 'icon', //为icon则是图标
+              label: '推荐', // 功能
+              icon: 'iconfont recommend-btn icon-iconkuozhan_tuijianpre',
+              permission: '3010105', // 后期这个操作的权限，用来控制权限
+              handleRow: this.handleRow
+            },
+            {
+              label: '删除', // 操作名称
+              type: 'danger', //为element btn属性则是按钮
+              permission: '2010702', // 后期这个操作的权限，用来控制权限
+              handleRow: this.handleRow
+            }
+          ]
+        }
+      },
+      dialogAdd: true,
+      msg: {}
+    }
+  },
+  watch: {
+    $route: {
+      handler: 'resetData'
     }
   },
   created() {
-    console.log(this.$route.name)
-    this.fetchData(this.$route.name)
+    console.log("table")
+    this.getList()
   },
   methods: {
-    fetchData(tableName) {
-      this.listLoading = true
-
-      getMainListByPage(tableName, this.page.thisPage, this.page.pageSize).then(response => {
-        console.log(response.data)
-        this.tableDataList = response.data.tableDataList;
-        this.tableColumns = response.data.tableColumns;
-        this.listLoading = false
-      })
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.page.pageSize = val;
-      this.fetchData(this.$route.name)
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
-    resetData() {
-      console.log(this.$route.name)
-      //在这里获取并处理该路由下所需要的数据。
-      const tableName = this.$route.name;
-      this.fetchData(tableName);
-    },
-    getDetails(id, tableName) {
-      tableName = tableName === undefined ? this.$route.name : tableName;
-      console.log(id + '  ' + tableName)
-      this.$router.push({
-        name: 'Form',
-        params: {
-          goBackName: this.$route.name,
-          tableName: tableName,
-          tableId: id,
-          create: false
+    getList() {
+      this.dataSource.loading = true
+      const pageData = this.dataSource.pageData
+      const tableName = this.$route.name
+      getMainListByPage(tableName, pageData.pageNum, pageData.pageSize).then(res => {
+        this.dataSource.loading = false
+        console.log(res)
+        if (res.success) {
+          if (res.data.total > 0) {
+            this.dataSource.cols = res.data.tableColumns
+            this.dataSource.pageData.total = res.data.total
+            this.dataSource.data = res.data.tableDataList
+          } else {
+            this.dataSource.cols = res.data.tableColumns
+            this.dataSource.data = []
+            this.dataSource.pageData.total = 0
+          }
         }
       })
+    },
+    filterMsg(msg) {
+      this.msg = msg
+      this.getList()
+    },
+    changeSize(size) {
+      this.dataSource.pageData.pageSize = size
+      this.getList()
+    },
+    changeNum(pageNum) {
+      this.dataSource.pageData.pageNum = pageNum
+      this.getList()
+    },
+    resetData() {
+      //在这里获取并处理该路由下所需要的数据。
+      const tableName = this.$route.name;
+      this.getList();
     },
     createTable() {
       this.$router.push({
@@ -131,12 +145,10 @@ export default {
     deleteTable() {
 
     }
-  },
-  watch: {
-    $route: {
-      handler: 'resetData',
-    }
   }
 }
 </script>
 
+<style scoped lang='scss'>
+
+</style>

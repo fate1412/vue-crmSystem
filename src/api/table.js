@@ -62,3 +62,20 @@ export function deleteMainTable(tableName,id) {
     }
   })
 }
+
+export function getTables() {
+  return request({
+    url: '/custom/tables',
+    method: 'get'
+  })
+}
+
+export function getTableColumns(tableName) {
+  return request({
+    url: '/custom/tableColumns',
+    method: 'get',
+    params: {
+      'tableName': tableName
+    }
+  })
+}

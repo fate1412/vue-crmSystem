@@ -9,28 +9,34 @@
     </div>
 
 
-    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right">
-      <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.title"
+    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right" >
+      <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
                     v-if="!column.disabled || (!edit && !create)" style="width: 49%; min-width: 300px">
         <!--        下拉选择框-->
-        <el-select v-if="column.formType==='Select'" v-model="form[column.name]" :label="column.title"
-                   :disabled="column.disabled || disabled" placeholder="请选择活动区域"></el-select>
+        <el-select v-if="column.formType==='Select'" v-model="form[column.prop]" :label="column.label"
+                   :disabled="column.disabled || disabled" placeholder="请选择活动区域">
+
+          <el-option v-for="item in column.options" :key="item.value" :label="item.label" :value="item.value">
+
+          </el-option>
+        </el-select>
+
         <!--        时间-->
         <div v-else-if="column.formType==='Date' || column.formType==='DateTime'" style="width: 200%">
           <el-col style="width: 41%">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.name]"
+            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]"
                             :disabled="column.disabled || disabled" style="width: 100%;"></el-date-picker>
           </el-col>
           <div v-if="column.formType==='DateTime'">
             <el-col class="line" :span="2">-</el-col>
             <el-col style="width: 40%">
-              <el-time-picker placeholder="选择时间" v-model="form[column.name]"
+              <el-time-picker placeholder="选择时间" v-model="form[column.prop]"
                               :disabled="column.disabled || disabled" style="width: 100%;"></el-time-picker>
             </el-col>
           </div>
         </div>
 
-        <el-input v-if="column.formType==='Input'" v-model="column.link? form[column.name].name : form[column.name]"
+        <el-input v-if="column.formType==='Input'" v-model="column.link? form[column.prop].name : form[column.prop]"
                   :disabled="column.disabled || disabled"/>
       </el-form-item>
 
@@ -84,14 +90,8 @@ export default {
     getColumns(tableName) {
       this.listLoading = true
       getColumns(tableName).then(response => {
-        this.tableColumns = response.data;
-        for (let i = 0; i < response.data.length; i++) {
-          if (response.data.link) {
-            this.form[response.data[i].name] = {}
-          }
-          this.form[response.data[i].name] = ""
-        }
-        console.log(this.form)
+        this.form = response.data.tableDataList[0];
+        this.tableColumns = response.data.tableColumns;
         this.listLoading = false
       })
     },

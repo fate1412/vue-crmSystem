@@ -218,12 +218,33 @@ export const constantRouterMap = [
   {
     path: '/setting',
     component: Layout,
+    name: 'Setting',
+    meta: { title: '设置', icon: 'example' },
     children: [
       {
-        path: 'index',
-        name: 'Setting',
-        // component: () => import('@/views/form/index'),
-        meta: { title: '设置', icon: 'form' }
+        path: '/user',
+        name: 'sysUser',
+        component: () => import('@/views/table/index'),
+        meta: { title: '用户管理', icon: 'table' }
+      },
+      {
+        path: '/role',
+        name: 'sysRole',
+        component: () => import('@/views/table/index'),
+        meta: { title: '角色管理', icon: 'table' }
+      },
+      {
+        path: '/permission',
+        name: 'sysPermission',
+        component: () => import('@/views/table/index'),
+        meta: { title: '权限管理', icon: 'table' }
+      },
+      {
+        path: '/custom',
+        name: 'custom',
+        // component: () => import('@/views/table/setting/index'),
+        component: () => import('@/views/table/suggestion'),
+        meta: { title: '定制化管理', icon: 'table' }
       }
     ]
   },
