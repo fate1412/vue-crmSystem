@@ -77,7 +77,7 @@ export const constantRouterMap = [
           {
             path: 'customer',
             name: 'customer',
-            component: () => import('@/views/table/index'),
+            component: () => import('@/views/table/customer'),
             meta: { title: '客户', icon: 'table' }
           },
           {

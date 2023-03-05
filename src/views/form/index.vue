@@ -16,7 +16,7 @@
         <el-select v-if="column.formType==='Select'" v-model="form[column.prop]" :label="column.label"
                    :disabled="column.disabled || disabled" placeholder="请选择活动区域">
 
-          <el-option v-for="item in column.options" :key="item.value" :label="item.label" :value="item.value">
+          <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey">
 
           </el-option>
         </el-select>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <el-input v-if="column.formType==='Input'" v-model="column.link? form[column.prop].name : form[column.prop]"
+        <el-input v-if="column.formType==='Input'" v-model="form[column.prop]"
                   :disabled="column.disabled || disabled"/>
       </el-form-item>
 
@@ -72,37 +72,44 @@ export default {
   },
   created() {
     const params = this.$route.params
-    console.log("form")
-    console.log(this.$route.params)
+    // console.log("form")
+    // console.log(this.$route.params)
     this.create = params.create === undefined ? true : params.create
     this.goBackName = params.goBackName;
     this.tableName = params.tableName;
     this.id = params.tableId;
     this.disabled = params.disabled === undefined ? true : params.disabled;
-    console.log(this.create)
-    if (this.create) {
-      this.getColumns(this.tableName)
-    } else {
-      this.fetchData(this.tableName, this.id)
-    }
+    // console.log(this.create)
+    this.fetchData(this.tableName, this.id)
+
   },
   methods: {
-    getColumns(tableName) {
-      this.listLoading = true
-      getColumns(tableName).then(response => {
-        this.form = response.data.tableDataList[0];
-        this.tableColumns = response.data.tableColumns;
-        this.listLoading = false
-      })
-    },
+    // getColumns(tableName) {
+    //   this.listLoading = true
+    //   getColumns(tableName).then(response => {
+    //     this.form = response.data.tableDataList[0];
+    //     console.log(this.form)
+    //     this.tableColumns = response.data.tableColumns;
+    //     this.listLoading = false
+    //   })
+    // },
     fetchData(tableName, id) {
       this.listLoading = true
-      getMainTableById(tableName, id).then(response => {
-        console.log(response.data)
-        this.form = response.data.tableDataList[0];
+      getColumns(tableName).then(response => {
         this.tableColumns = response.data.tableColumns;
-        this.listLoading = false
+        if (this.create) {
+          console.log(this.form)
+          this.form = response.data.tableDataList[0];
+          this.listLoading = false
+        } else {
+          getMainTableById(tableName, id).then(response => {
+            console.log(response.data)
+            this.form = response.data.tableDataList[0];
+            this.listLoading = false
+          })
+        }
       })
+
     },
     goBack() {
       this.$router.push({

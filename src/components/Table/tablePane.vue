@@ -16,7 +16,7 @@
     <el-table
       ref="table"
       v-loading="dataSource.loading"
-      :border="dataSource.border?true:false"
+      :border="!!dataSource.border"
       style="width: 100%;"
       :class="{ 'no-data': !dataSource.data || !dataSource.data.length }"
       :data="dataSource.data"
@@ -109,11 +109,11 @@
             <el-link v-if="item.fixed || item.link" :underline="false"
                      style="color: deepskyblue"
                      @click="getDetails(
-                       scope.row[item.prop].id === undefined? scope.row[item.prop] : scope.row[item.prop].id,
+                       scope.row[item.prop].value === undefined? scope.row[item.prop] : scope.row[item.prop].value,
                        scope.row[item.prop].tableName
                        )"
             >
-              {{ scope.row[item.prop].name === undefined? scope.row[item.prop] : scope.row[item.prop].name }}
+              {{ scope.row[item.prop].title === undefined? scope.row[item.prop] : scope.row[item.prop].title }}
             </el-link>
             <div v-else>{{ scope.row[item.prop] }}</div>
           </template>
@@ -170,10 +170,49 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <el-dialog :visible.sync = "dialogVisible">
+      <el-form :model="form" ref="form" label-width="100px" label-position="right">
+        <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
+                      v-if="!column.disabled ||  !create">
+          <!--        下拉选择框-->
+          <el-select v-if="column.formType==='Select'" v-model="form[column.prop]" :label="column.label"
+                     :disabled="column.disabled" placeholder="请选择活动区域">
+
+            <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.option">
+
+            </el-option>
+          </el-select>
+
+          <!--        时间-->
+          <div v-else-if="column.formType==='Date' || column.formType==='DateTime'">
+            <el-col span="11">
+              <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]"
+                              :disabled="column.disabled" style="width: 100%;"></el-date-picker>
+            </el-col>
+            <div v-if="column.formType==='DateTime'">
+              <el-col class="line" :span="2">-</el-col>
+              <el-col span="11">
+                <el-time-picker placeholder="选择时间" v-model="form[column.prop]"
+                                :disabled="column.disabled" style="width: 100%;"></el-time-picker>
+              </el-col>
+            </div>
+          </div>
+
+          <el-input v-if="column.formType==='Input'" v-model="column.link? form[column.prop].name : form[column.prop]"
+                    :disabled="column.disabled"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { getList, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
 //  dataSource: {
 //          tool:[
 //            {
@@ -223,6 +262,10 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
+      form:{},
+      tableColumns:[],
+      create: false
       // currentPage4: 4
     }
   },
@@ -267,7 +310,33 @@ export default {
           create: false
         }
       })
-    }
+    },
+    showDialog(id, tableName) {
+      this.dialogVisible = true
+      tableName = tableName === undefined ? this.$route.name : tableName
+      if (this.create) {
+        this.getColumns(tableName)
+      } else {
+        this.fetchData(tableName, id)
+      }
+    },
+    getColumns(tableName) {
+      this.listLoading = true
+      getColumns(tableName).then(response => {
+        this.form = response.data.tableDataList[0];
+        this.tableColumns = response.data.tableColumns;
+        this.listLoading = false
+      })
+    },
+    fetchData(tableName, id) {
+      this.listLoading = true
+      getMainTableById(tableName, id).then(response => {
+        console.log(response.data)
+        this.form = response.data.tableDataList[0];
+        this.tableColumns = response.data.tableColumns;
+        this.listLoading = false
+      })
+    },
   }
 }
 </script>
