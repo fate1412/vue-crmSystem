@@ -64,7 +64,7 @@ export default {
           {
             label: '客户类型',
             // width: 100,
-            prop: 'customerType'
+            prop: 'customerTypeR'
           },
           {
             label: '手机号',
@@ -153,7 +153,6 @@ export default {
       const tableName = this.$route.name
       getMainListByPage(tableName, pageData.pageNum, pageData.pageSize).then(res => {
         this.dataSource.loading = false
-        console.log(res)
         if (res.success) {
           if (res.data.total > 0) {
             // this.dataSource.cols = res.data.tableColumns

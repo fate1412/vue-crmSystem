@@ -6,7 +6,13 @@ import { getToken } from '@/utils/auth'
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 5000 // 请求超时时间
+  timeout: 5000, // 请求超时时间
+  // `transformResponse` 在传递给 then/catch 前，允许修改响应数据---使前端支持超长Long型数据，将Long转为了字符串
+  transformResponse: [function (data) {
+    /* eslint-disable no-undef */
+    return jsonlint.parse(data)
+  }]
+
 })
 
 axios.defaults.withCredentials=true;
