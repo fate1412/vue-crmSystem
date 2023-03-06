@@ -24,18 +24,18 @@
         <!--        时间-->
         <div v-else-if="column.formType==='Date' || column.formType==='DateTime'" style="width: 200%">
           <el-col style="width: 41%">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]"
+            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]" value-format="yyyy-MM-dd HH:mm:ss"
                             :disabled="column.disabled || disabled" style="width: 100%;"></el-date-picker>
           </el-col>
           <div v-if="column.formType==='DateTime'">
             <el-col class="line" :span="2">-</el-col>
             <el-col style="width: 40%">
-              <el-time-picker placeholder="选择时间" v-model="form[column.prop]"
+              <el-time-picker placeholder="选择时间" v-model="form[column.prop]" value-format="yyyy-MM-dd HH:mm:ss"
                               :disabled="column.disabled || disabled" style="width: 100%;"></el-time-picker>
             </el-col>
           </div>
         </div>
-
+<!--        Input-->
         <el-input v-if="column.formType==='Input'" v-model="form[column.prop]"
                   :disabled="column.disabled || disabled"/>
       </el-form-item>
@@ -55,16 +55,7 @@ export default {
       tableName: "",
       id: "",
       form: {},
-      tableColumns: [
-        {
-          "title": "客户类型",
-          "name": "customerType",
-          "fixed": false,
-          "link": false,
-          "formType": "Select",
-          "disabled": ""
-        }
-      ],
+      tableColumns: [],
       disabled: true,
       edit: false,
       create: true
