@@ -8,18 +8,20 @@
       <el-button @click="cancelTable">{{ create || edit ? '取消' : '删除' }}</el-button>
     </div>
 
-
     <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right" >
       <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
                     v-if="!column.disabled || (!edit && !create)" style="width: 49%; min-width: 300px">
         <!--        下拉选择框-->
-        <el-select v-if="column.formType==='Select'" v-model="form[column.prop]" :label="column.label"
-                   :disabled="column.disabled || disabled" placeholder="请选择活动区域">
 
-          <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey">
+        <el-select v-if="column.formType==='Select' && !column.link" v-model="form[column.prop]" :label="column.label"
+                   :disabled="column.disabled || disabled" placeholder="">
 
-          </el-option>
+          <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey"/>
+
         </el-select>
+
+        <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="form[column.prop]"
+                      :disabled="column.disabled || disabled" placeholder=""/>
 
         <!--        时间-->
         <div v-else-if="column.formType==='Date' || column.formType==='DateTime'" style="width: 200%">
@@ -45,9 +47,14 @@
 </template>
 
 <script>
+import myElSelect from '@/components/Table/my-el-select'
+
 import { getList, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
 
 export default {
+  components: {
+    myElSelect
+  },
   data() {
     return {
       listLoading: true,

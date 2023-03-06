@@ -1,6 +1,8 @@
 <template>
-  <el-select v-model="id" filterable remote reserve-keyword :placeholder="placeholder" :remote-method="getSelectList"
-             :loading="loading" clearable v-el-select-lazyLoading="doGetList" ref="optionRef">
+  <el-select v-model="svalue" filterable remote reserve-keyword :placeholder="placeholder"
+             :remote-method="getSelectList"
+             :loading="loading" :disabled="disabled"
+             clearable v-el-select-lazyLoading="doGetList" ref="optionRef" >
     <el-option
         v-for="item in selectList"
         :key="item.id"
@@ -15,27 +17,47 @@ import debounce from "lodash/debounce";
 export default {
   data() {
     return {
-      id: '',
       selectList: [],
       currentPage: 1,
       loading: false,
       previousQuery: '',
+      svalue: this.value
+    }
+  },
+  watch: {
+    value(newValue) {
+      console.log(1)
+      this.svalue = newValue
+    },
+    svalue(newVal,oldVal) {
+      console.log(2)
+      if(newVal !== oldVal) {
+        if (newVal===undefined || newVal===null) {
+          newVal='123'
+        }
+        this.$emit("input",newVal)
+      }
     }
   },
   created() {
-    this.doSelectList('', 1).then((data) => {
-      this.selectList = [...data]
-      this.currentPage++;
-    })
+    // this.doSelectList('', 1).then((data) => {
+    //   this.selectList = [...data]
+    //   this.currentPage++;
+    // })
   },
   props: {
+    value: {
+      type: [String, Number,],
+      required: true
+    },
     doSelectList: {
       type: Function,
       default: () => {
         return Function;
       }
     },
-    placeholder: String
+    placeholder: String,
+    disabled: Boolean
   },
   directives: {
     "el-select-lazyLoading": {
