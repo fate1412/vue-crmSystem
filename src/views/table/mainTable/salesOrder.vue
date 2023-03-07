@@ -80,7 +80,7 @@ export default {
           },
           {
             label: '发货状态',
-            prop: 'invoiceStatus',
+            prop: 'invoiceStatusR',
             // width: 230
           },
           {
