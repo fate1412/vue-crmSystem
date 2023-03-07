@@ -8,38 +8,42 @@
       <el-button @click="cancelTable">{{ create || edit ? '取消' : '删除' }}</el-button>
     </div>
 
-    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right" >
+    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right">
       <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
-                    v-if="!column.disabled || (!edit && !create)" style="width: 49%; min-width: 300px">
+                    v-if="isShow(column.inserted)"
+                    style="width: 49%; min-width: 300px">
         <!--        下拉选择框-->
 
         <el-select v-if="column.formType==='Select' && !column.link" v-model="form[column.prop]" :label="column.label"
-                   :disabled="column.disabled || disabled" placeholder="">
+                   :disabled="(!create && column.disabled ) || disabled" placeholder="">
 
           <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey"/>
 
         </el-select>
 
         <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="form[column.prop]"
-                      :disabled="column.disabled || disabled" placeholder=""/>
+                      :disabled="(!create && column.disabled ) || disabled" placeholder=""
+                      :doSelectList="getOptions" :tableName="form[column.prop + 'R'].tableName"
+        />
 
         <!--        时间-->
         <div v-else-if="column.formType==='Date' || column.formType==='DateTime'" style="width: 200%">
           <el-col style="width: 41%">
-            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]" value-format="yyyy-MM-dd HH:mm:ss"
-                            :disabled="column.disabled || disabled" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="form[column.prop]"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            :disabled="(!create && column.disabled ) || disabled" style="width: 100%;"></el-date-picker>
           </el-col>
           <div v-if="column.formType==='DateTime'">
             <el-col class="line" :span="2">-</el-col>
             <el-col style="width: 40%">
               <el-time-picker placeholder="选择时间" v-model="form[column.prop]" value-format="yyyy-MM-dd HH:mm:ss"
-                              :disabled="column.disabled || disabled" style="width: 100%;"></el-time-picker>
+                              :disabled="(!create && column.disabled ) || disabled" style="width: 100%;"></el-time-picker>
             </el-col>
           </div>
         </div>
-<!--        Input-->
+        <!--        Input-->
         <el-input v-if="column.formType==='Input'" v-model="form[column.prop]"
-                  :disabled="column.disabled || disabled"/>
+                  :disabled="(!create && column.disabled ) || disabled"/>
       </el-form-item>
 
     </el-form>
@@ -49,7 +53,7 @@
 <script>
 import myElSelect from '@/components/Table/my-el-select'
 
-import { getList, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
+import { getOptions, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
 
 export default {
   components: {
@@ -70,43 +74,38 @@ export default {
   },
   created() {
     const params = this.$route.params
-    // console.log("form")
-    // console.log(this.$route.params)
     this.create = params.create === undefined ? true : params.create
     this.goBackName = params.goBackName;
     this.tableName = params.tableName;
     this.id = params.tableId;
     this.disabled = params.disabled === undefined ? true : params.disabled;
-    // console.log(this.create)
     this.fetchData(this.tableName, this.id)
 
   },
   methods: {
-    // getColumns(tableName) {
-    //   this.listLoading = true
-    //   getColumns(tableName).then(response => {
-    //     this.form = response.data.tableDataList[0];
-    //     console.log(this.form)
-    //     this.tableColumns = response.data.tableColumns;
-    //     this.listLoading = false
-    //   })
-    // },
     fetchData(tableName, id) {
-      this.listLoading = true
-      getColumns(tableName).then(response => {
-        this.tableColumns = response.data.tableColumns;
+      if (tableName === undefined || tableName === null) {
+        this.$router.push({
+          name: 'customer'
+        })
+      } else {
+        this.listLoading = true
         if (this.create) {
-          console.log(this.form)
-          this.form = response.data.tableDataList[0];
-          this.listLoading = false
+          getColumns(tableName).then(response => {
+            console.log(this.form)
+            this.form = response.data.tableDataList[0];
+            this.tableColumns = response.data.tableColumns;
+            this.listLoading = false
+          })
         } else {
           getMainTableById(tableName, id).then(response => {
             console.log(response.data)
             this.form = response.data.tableDataList[0];
+            this.tableColumns = response.data.tableColumns;
             this.listLoading = false
           })
         }
-      })
+      }
 
     },
     goBack() {
@@ -177,6 +176,23 @@ export default {
           message: '已取消'
         });
       });
+    },
+    getOptions(query, page, tableName) {
+      let params = {
+        "nameLike": query,
+        "page": page,
+        "tableName": tableName
+      }
+      return getOptions(params).then(res => {
+        return Promise.resolve(res.data)
+      })
+    },
+    isShow(inserted) {
+      if (this.create) {
+        return inserted
+      } else {
+        return true
+      }
     }
   }
 }

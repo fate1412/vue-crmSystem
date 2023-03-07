@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="dataSource.tool" class="tool">
+    <div v-if="dataSource.tool" class="tool" style="margin-top: 10px;margin-bottom: 10px">
       <el-button
         v-for="(item) in dataSource.tool"
         :key="item.key"
@@ -125,7 +125,7 @@
         v-if="dataSource.isOperation"
         :show-overflow-tooltip="dataSource.operation.overflowTooltip"
         v-bind="dataSource.data && dataSource.data.length ? { fixed: 'right' } : null"
-        style="margin-right:20px"
+        style="margin-right:20px;"
         class-name="handle-td"
         label-class-name="tc"
         :width="dataSource.operation.width"

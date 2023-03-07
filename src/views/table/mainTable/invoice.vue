@@ -13,13 +13,14 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 
-import { getMainListByPage } from '@/api/table'
+import { getMainListByPage, deleteMainTable } from '@/api/table'
 
 export default {
   name: 'invoice',
   components: { filterPane, tablePane },
   data() {
     return {
+      tableName: 'invoice',
       // 搜索栏配置
       filterData: {
         timeSelect: false,
@@ -63,7 +64,7 @@ export default {
           },
           {
             label: '客户名称',
-            prop: 'customerR',
+            prop: 'customerIdR',
             link: true,
             click: this.getDetails
             // width: 230
@@ -138,17 +139,12 @@ export default {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               permission: '2010702', // 后期这个操作的权限，用来控制权限
-              handleRow: this.handleRow
+              handleRow: this.deleteTable
             }
           ]
         }
       },
       msg: {}
-    }
-  },
-  watch: {
-    $route: {
-      handler: 'resetData'
     }
   },
   created() {
@@ -159,16 +155,13 @@ export default {
     getList() {
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
-      const tableName = 'invoice'
-      getMainListByPage(tableName, pageData.pageNum, pageData.pageSize).then(res => {
+      getMainListByPage(this.tableName, pageData.pageNum, pageData.pageSize).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
           } else {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.data = []
             this.dataSource.pageData.total = 0
           }
@@ -187,22 +180,40 @@ export default {
       this.dataSource.pageData.pageNum = pageNum
       this.getList()
     },
-    resetData() {
-      //在这里获取并处理该路由下所需要的数据。
-      this.getList();
-    },
     createTable() {
       this.$router.push({
         name: 'Form',
         params: {
-          goBackName: this.$route.name,
-          tableName: this.$route.name,
+          goBackName: this.tableName,
+          tableName: this.tableName,
           disabled: false
         }
       })
     },
-    deleteTable() {
-
+    open(message, operation) {
+      this.$confirm(message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        operation();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+    },
+    deleteTable(index,row,label) {
+      this.open('此操作将永久删除该, 是否继续?', () => {
+        return deleteMainTable(this.tableName, row.id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+          this.getList();
+        });
+      });
     }
   }
 }

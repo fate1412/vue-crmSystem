@@ -2,6 +2,7 @@
   <el-select v-model="svalue" filterable remote reserve-keyword :placeholder="placeholder"
              :remote-method="getSelectList"
              :loading="loading" :disabled="disabled"
+             @change="schange"
              clearable v-el-select-lazyLoading="doGetList" ref="optionRef" >
     <el-option
         v-for="item in selectList"
@@ -32,18 +33,16 @@ export default {
     svalue(newVal,oldVal) {
       console.log(2)
       if(newVal !== oldVal) {
-        if (newVal===undefined || newVal===null) {
-          newVal='123'
-        }
+        newVal = newVal || ''
         this.$emit("input",newVal)
       }
     }
   },
   created() {
-    // this.doSelectList('', 1).then((data) => {
-    //   this.selectList = [...data]
-    //   this.currentPage++;
-    // })
+    this.doSelectList('', 1,this.tableName).then((data) => {
+      this.selectList = [...data]
+      this.currentPage++;
+    })
   },
   props: {
     value: {
@@ -57,7 +56,8 @@ export default {
       }
     },
     placeholder: String,
-    disabled: Boolean
+    disabled: Boolean,
+    tableName: String
   },
   directives: {
     "el-select-lazyLoading": {
@@ -87,7 +87,7 @@ export default {
         this.selectList = []
         this.previousQuery = query
       }
-      this.doSelectList(query, this.currentPage).then((data) => {
+      this.doSelectList(query, this.currentPage, this.tableName).then((data) => {
         //返回空集合则说明已经超过总页数
         if (!(data === undefined || data === null || data.length === 0))
         {
@@ -99,6 +99,9 @@ export default {
           },500)
         }
       }).catch(() =>{})
+    },
+    schange(val) {
+      console.log(12333)
     }
   }
 }

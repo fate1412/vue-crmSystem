@@ -79,3 +79,11 @@ export function getTableColumns(tableName) {
     }
   })
 }
+
+export function getOptions(params) {
+  return request({
+    url: '/'+ params.tableName + '/getOptions',
+    method: 'get',
+    params: params
+  })
+}

@@ -13,27 +13,27 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 
-import { getMainListByPage } from '@/api/table'
+import { getMainListByPage, deleteMainTable } from '@/api/table'
 
 export default {
-  name: 'customer',
+  name: 'stockListProduct',
   components: { filterPane, tablePane },
   data() {
     return {
-      dialogVisible: true,
+      tableName: 'stockListProduct',
       // 搜索栏配置
       filterData: {
         timeSelect: false,
         elinput: [
           {
-            name: '客户ID',
+            name: '备货单产品Id',
             width: 230,
             key: 'id'
           },
           {
-            name: '客户名称',
+            name: '备货单Id',
             width: 230,
-            key: 'name'
+            key: 'stockListIdR'
           }
         ]
       },
@@ -58,12 +58,14 @@ export default {
           {
             label: '备货单Id',
             // width: 100,
-            prop: 'stockListR'
+            prop: 'stockListIdR',
+            link: true
           },
           {
             label: '产品id',
             // width: 100,
-            prop: 'productR'
+            prop: 'productIdR',
+            link: true
           },
           {
             label: '备货数量',
@@ -111,48 +113,31 @@ export default {
           width: '100', // 根据实际情况给宽度
           data: [ // 功能数组
             {
-              type: 'icon', //为icon则是图标
-              label: '推荐', // 功能
-              icon: 'iconfont recommend-btn icon-iconkuozhan_tuijianpre',
-              permission: '3010105', // 后期这个操作的权限，用来控制权限
-              handleRow: this.handleRow
-            },
-            {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               permission: '2010702', // 后期这个操作的权限，用来控制权限
-              handleRow: this.handleRow
+              handleRow: this.deleteTable
             }
           ]
         }
       },
-      dialogAdd: true,
       msg: {}
     }
   },
-  watch: {
-    $route: {
-      handler: 'resetData'
-    }
-  },
   created() {
-    console.log("table")
     this.getList()
   },
   methods: {
     getList() {
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
-      const tableName = this.$route.name
-      getMainListByPage(tableName, pageData.pageNum, pageData.pageSize).then(res => {
+      getMainListByPage(this.tableName, pageData.pageNum, pageData.pageSize).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
           } else {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.data = []
             this.dataSource.pageData.total = 0
           }
@@ -171,22 +156,40 @@ export default {
       this.dataSource.pageData.pageNum = pageNum
       this.getList()
     },
-    resetData() {
-      //在这里获取并处理该路由下所需要的数据。
-      this.getList();
-    },
     createTable() {
       this.$router.push({
         name: 'Form',
         params: {
-          goBackName: this.$route.name,
-          tableName: this.$route.name,
+          goBackName: this.tableName,
+          tableName: this.tableName,
           disabled: false
         }
       })
     },
-    deleteTable() {
-
+    open(message, operation) {
+      this.$confirm(message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        operation();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+    },
+    deleteTable(index,row,label) {
+      this.open('此操作将永久删除该, 是否继续?', () => {
+        return deleteMainTable(this.tableName, row.id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+          this.getList();
+        });
+      });
     }
   }
 }
