@@ -130,7 +130,6 @@ export default {
           this.disabled = !this.disabled
 
           this.fetchData(this.tableName, this.id);
-
           this.listLoading = false
         })
       } else {
@@ -138,6 +137,8 @@ export default {
         this.disabled = !this.disabled
         this.listLoading = false
       }
+      this.listLoading = false
+
     },
     cancelTable() {
       if (this.create) {
