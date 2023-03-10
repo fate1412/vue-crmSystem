@@ -96,11 +96,6 @@ export default {
             // width: 230
           },
           {
-            label: '折扣/%',
-            prop: 'discount',
-            // width: 230
-          },
-          {
             label: '创建时间',
             prop: 'createTime',
             // width: 230

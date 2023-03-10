@@ -8,7 +8,6 @@
       <el-button @click="cancelTable">{{ create || edit ? '取消' : '删除' }}</el-button>
     </div>
 
-    <h5>主对象</h5>
     <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right">
       <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
                     v-if="isShow(column.inserted)"
@@ -52,46 +51,6 @@
       </el-form-item>
 
     </el-form>
-
-    <!--子对象-->
-    <div v-if="child!==undefined && child !== null"  style="padding: 10px;">
-      <h5>子对象</h5>
-      <el-button :disabled="disabled" type="warning" @click="childAdd()">新增</el-button>
-      <el-table :data="child.forms" border style="width: 100%">
-        <el-table-column v-for="(column,index) in child.tableColumns" :key="index" align="center" :label="column.label"
-                         :prop="column.prop" :fixed="column.fixed">
-          <template slot-scope="scope">
-            <!--        下拉选择框-->
-            <el-select v-if="column.formType==='Select' && !column.link" v-model="scope.row[column.prop]" :label="column.label"
-                       :disabled="(!create && column.disabled ) || disabled" placeholder=""
-                       v-show="scope.row.isEditor"
-            >
-
-              <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey"/>
-
-            </el-select>
-
-            <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="scope.row[column.prop]"
-                          :disabled="(!create && column.disabled ) || disabled" placeholder=""
-                          :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
-                          v-show="scope.row.isEditor"/>
-            <input v-else :disabled="disabled" type="text" v-model="scope.row[column.prop]" v-show="scope.row.isEditor"/>
-            <span v-if="column.formType==='Select' && column.link"
-                  v-show="!scope.row.isEditor">
-              {{ scope.row[column.prop + 'R'].name }}
-            </span>
-            <span v-else v-show="!scope.row.isEditor">{{ scope.row[column.prop] }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="操作" width="180">
-          <template slot-scope="scope">
-            <el-button :disabled="disabled" type="warning" @click="childEdit(scope.row, scope)">{{ scope.row.isEditor? "保存" : "编辑" }}</el-button>
-            <el-button :disabled="disabled" type="danger" @click="childDel(scope.row,scope.$index)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
   </div>
 </template>
 
@@ -111,10 +70,6 @@ export default {
       tableName: "",
       id: "",
       form: {},
-      child: {
-        tableColumns: [],
-        forms: []
-      },
       tableColumns: [],
       disabled: true,
       edit: false,
@@ -141,28 +96,16 @@ export default {
         this.listLoading = true
         if (this.create) {
           getColumns(tableName).then(response => {
-            const data = response.data;
-            this.form = data.tableDataList[0];
-            this.tableColumns = data.tableColumns;
-            if (data.child === undefined || data.child === null) {
-              this.child = null
-            }else {
-              this.child.tableColumns = data.child.tableColumns
-              this.child.forms = data.child.tableDataList
-            }
+            console.log(this.form)
+            this.form = response.data.tableDataList[0];
+            this.tableColumns = response.data.tableColumns;
             this.listLoading = false
           })
         } else {
           getMainTableById(tableName, id).then(response => {
-            const data = response.data;
-            this.form = data.tableDataList[0];
-            this.tableColumns = data.tableColumns;
-            if (data.child === undefined || data.child === null) {
-              this.child = null
-            }else {
-              this.child.tableColumns = data.child.tableColumns
-              this.child.forms = data.child.tableDataList
-            }
+            console.log(response.data)
+            this.form = response.data.tableDataList[0];
+            this.tableColumns = response.data.tableColumns;
             this.listLoading = false
           })
         }
@@ -176,20 +119,16 @@ export default {
     },
     saveTable() {
       this.listLoading = true
-      const data = this.form;
-      if (this.child !== null) {
-        data.childList = this.child.forms
-      }
       if (this.create) {
         //新增
-        addMainTable(this.tableName, data).then(response => {
+        addMainTable(this.tableName, this.form).then(response => {
           this.$message('新增成功！')
           this.listLoading = false
           this.goBack();
         })
       } else if (this.edit) {
         //编辑
-        updateMainTable(this.tableName, data).then(response => {
+        updateMainTable(this.tableName, this.form).then(response => {
           this.$message('修改成功')
           this.edit = !this.edit
           this.disabled = !this.disabled
@@ -217,7 +156,6 @@ export default {
       } else if (this.edit) {
         this.edit = !this.edit
         this.disabled = !this.disabled
-        this.fetchData(this.tableName, this.id)
       } else {
         this.open('此操作将永久删除该, 是否继续?', () => {
           return deleteMainTable(this.tableName, this.form.id).then(response => {
@@ -260,20 +198,6 @@ export default {
       } else {
         return true
       }
-    },
-    childEdit(row, index) {
-      row.isEditor = !row.isEditor;
-    },
-    childDel(row, index) {
-      this.child.forms.splice(index,1)
-    },
-    childAdd() {
-      const columns = this.child.tableColumns
-      
-      let data = {
-        "isEditor": false
-      }
-      this.child.forms.push(data)
     }
   }
 }

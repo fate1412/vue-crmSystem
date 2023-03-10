@@ -89,6 +89,11 @@ export default {
             // width: 230
           },
           {
+            label: '折扣/%',
+            prop: 'discount',
+            // width: 230
+          },
+          {
             label: '折后总价',
             prop: 'discountPrices',
             // width: 230
