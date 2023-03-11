@@ -22,13 +22,14 @@ export default {
       currentPage: 1,
       loading: false,
       previousQuery: '',
-      svalue: this.value
+      svalue: this.value,
+      name: ''
     }
   },
   watch: {
     value(newValue) {
       console.log(1)
-      this.svalue = newValue
+      this.svalue = newValue || ''
     },
     svalue(newVal,oldVal) {
       console.log(2)
@@ -36,6 +37,7 @@ export default {
         newVal = newVal || ''
         this.$emit("input",newVal)
       }
+      this.$emit("input",newVal || '')
     }
   },
   created() {
@@ -47,7 +49,8 @@ export default {
   props: {
     value: {
       type: [String, Number,],
-      required: true
+      required: true,
+      default: ''
     },
     doSelectList: {
       type: Function,
@@ -101,7 +104,11 @@ export default {
       }).catch(() =>{})
     },
     schange(val) {
-      console.log(12333)
+      console.log(111)
+      console.log(this.selectList);
+      const selectedOption = this.selectList.find(option => option.id === val) || {};
+      this.name = selectedOption.name
+      console.log(selectedOption.id, selectedOption.name); // 输出选中的 label 和 value
     }
   }
 }

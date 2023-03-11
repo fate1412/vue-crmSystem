@@ -54,7 +54,7 @@
     </el-form>
 
     <!--子对象-->
-    <div v-if="child!==undefined && child !== null"  style="padding: 10px;">
+    <div v-if="child!==undefined && child !== null" style="padding: 10px;">
       <h5>子对象</h5>
       <el-button :disabled="disabled" type="warning" @click="childAdd()">新增</el-button>
       <el-table :data="child.forms" border style="width: 100%">
@@ -62,20 +62,26 @@
                          :prop="column.prop" :fixed="column.fixed">
           <template slot-scope="scope">
             <!--        下拉选择框-->
-            <el-select v-if="column.formType==='Select' && !column.link" v-model="scope.row[column.prop]" :label="column.label"
+            <el-select v-if="column.formType==='Select' && !column.link" v-model="scope.row[column.prop]"
+                       :label="column.label"
+                       :ref="'child.' + scope.$index+'.'+index"
                        :disabled="(!create && column.disabled ) || disabled" placeholder=""
                        v-show="scope.row.isEditor"
             >
 
-              <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option" :value="item.optionKey"/>
+              <el-option v-for="item in column.options" :key="item.optionKey" :label="item.option"
+                         :value="item.optionKey"/>
 
             </el-select>
 
             <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="scope.row[column.prop]"
-                          :disabled="(!create && column.disabled ) || disabled" placeholder=""
+                          :disabled="(!create && column.disabled ) || disabled"
+                          placeholder=""
+                          :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>
-            <input v-else :disabled="disabled" type="text" v-model="scope.row[column.prop]" v-show="scope.row.isEditor"/>
+            <input v-else :disabled="disabled" type="text" v-model="scope.row[column.prop]"
+                   v-show="scope.row.isEditor"/>
             <span v-if="column.formType==='Select' && column.link"
                   v-show="!scope.row.isEditor">
               {{ scope.row[column.prop + 'R'].name }}
@@ -86,7 +92,9 @@
 
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
-            <el-button :disabled="disabled" type="warning" @click="childEdit(scope.row, scope)">{{ scope.row.isEditor? "保存" : "编辑" }}</el-button>
+            <el-button :disabled="disabled" type="warning" @click="childEdit(scope.row, scope.$index)">
+              {{ scope.row.isEditor ? "保存" : "编辑" }}
+            </el-button>
             <el-button :disabled="disabled" type="danger" @click="childDel(scope.row,scope.$index)">删除</el-button>
           </template>
         </el-table-column>
@@ -146,9 +154,10 @@ export default {
             this.tableColumns = data.tableColumns;
             if (data.child === undefined || data.child === null) {
               this.child = null
-            }else {
+            } else {
               this.child.tableColumns = data.child.tableColumns
-              this.child.forms = data.child.tableDataList
+              // this.child.forms = data.child.tableDataList
+              this.child.baseForm = data.child.tableDataList[0]
             }
             this.listLoading = false
           })
@@ -159,9 +168,10 @@ export default {
             this.tableColumns = data.tableColumns;
             if (data.child === undefined || data.child === null) {
               this.child = null
-            }else {
+            } else {
               this.child.tableColumns = data.child.tableColumns
               this.child.forms = data.child.tableDataList
+              this.child.baseForm = data.child.tableDataList[0]
             }
             this.listLoading = false
           })
@@ -262,17 +272,35 @@ export default {
       }
     },
     childEdit(row, index) {
+      if (row.isEditor) {
+        const columns = this.child.tableColumns
+        for (let i = 0; i < columns.length; i++) {
+          if (columns[i].formType === 'Select' && this.$refs['child.'+index+'.'+i][0].name !=='') {
+            row[columns[i].prop + 'R'].name = this.$refs['child.'+index+'.'+i][0].name
+          }
+        }
+      }
       row.isEditor = !row.isEditor;
     },
     childDel(row, index) {
-      this.child.forms.splice(index,1)
+      this.child.forms.splice(index, 1)
     },
     childAdd() {
-      const columns = this.child.tableColumns
-      
       let data = {
         "isEditor": false
       }
+      const columns = this.child.tableColumns
+      for (let i = 0; i < columns.length; i++) {
+        if (columns[i].formType === 'Select') {
+          console.log(columns[i])
+          data[columns[i].prop + 'R'] = {
+            'name': '',
+            'tableName': this.child.baseForm[columns[i].prop + 'R'].tableName
+          }
+        }
+
+      }
+
       this.child.forms.push(data)
     }
   }
