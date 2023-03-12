@@ -80,7 +80,7 @@
                           :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>
-            <input v-else :disabled="disabled" type="text" v-model="scope.row[column.prop]"
+            <input v-else :disabled="(!create && column.disabled ) || disabled" type="text" v-model="scope.row[column.prop]"
                    v-show="scope.row.isEditor"/>
             <span v-if="column.formType==='Select' && column.link"
                   v-show="!scope.row.isEditor">
@@ -156,7 +156,6 @@ export default {
               this.child = null
             } else {
               this.child.tableColumns = data.child.tableColumns
-              // this.child.forms = data.child.tableDataList
               this.child.baseForm = data.child.tableDataList[0]
             }
             this.listLoading = false
