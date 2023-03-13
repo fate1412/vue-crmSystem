@@ -87,3 +87,26 @@ export function getOptions(params) {
     params: params
   })
 }
+
+export function getRoles(id) {
+  return request({
+    url: '/sysUser/getRoles',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
+export function updateRoles(id,userRolesList) {
+  return request({
+    url: '/sysUser/updateRoles',
+    method: 'post',
+    data: {
+      'id': id,
+      'userRolesList': userRolesList
+    }
+  })
+}
+
+

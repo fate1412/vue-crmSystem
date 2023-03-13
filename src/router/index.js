@@ -212,20 +212,14 @@ export const constantRouterMap = [
       {
         path: '/user',
         name: 'sysUser',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/table/setting/sysUser'),
         meta: { title: '用户管理', icon: 'table' }
       },
       {
         path: '/role',
         name: 'sysRole',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/table/setting/sysRole'),
         meta: { title: '角色管理', icon: 'table' }
-      },
-      {
-        path: '/permission',
-        name: 'sysPermission',
-        component: () => import('@/views/table/index'),
-        meta: { title: '权限管理', icon: 'table' }
       },
       {
         path: '/custom',
