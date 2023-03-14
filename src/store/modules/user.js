@@ -7,7 +7,8 @@ const user = {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    permissionCodeList: []
   },
 
   mutations: {
@@ -22,6 +23,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_PERMISSIONS: (state, permissionCodeList) => {
+      state.permissionCodeList = permissionCodeList
     }
   },
 
@@ -36,15 +40,12 @@ const user = {
         login(userInfo.username, userInfo.password).then(response => {
           console.log(response)
           const data = response.data
-          // console.log(data.token)
-
-          // sessionStorage.setItem('authorities', JSON.stringify(data || '[]')) // 存储到session中
           setToken(data.token)
 
           commit('SET_TOKEN', data.token)
+          commit('SET_PERMISSIONS', data.permissionCodeList)
           resolve()
         }).catch(error => {
-          console.log("111")
           reject(error)
         })
       })
@@ -84,15 +85,13 @@ const user = {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
+          commit('SET_PERMISSIONS', [])
           removeToken()
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
-      // commit('SET_TOKEN', '')
-      // commit('SET_ROLES', [])
-      // removeToken()
     },
 
     // 前端 登出

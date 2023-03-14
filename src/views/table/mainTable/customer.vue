@@ -187,7 +187,10 @@ export default {
     },
     deleteTable(index,row,label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
-        return deleteMainTable(this.tableName, row.id).then(response => {
+        let data = {
+          'id': row.id
+        }
+        return deleteMainTable(this.tableName, data).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'

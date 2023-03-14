@@ -13,17 +13,17 @@
       <span>
         <el-form ref="form" label-width="100px"
                  label-position="right">
-          <el-form-item v-for="(role,index) in roles" :key="index" :label="'权限'+(index+1)">
-            <my-el-select v-model="role.roleId" placeholder="输入权限名称" ref=""
-              :doSelectList="getOptions" tableName="sysRole"/>
-            <el-button type="danger" @click="cancelRole(role,index)" style="margin-left: 10px" >删 除</el-button>
+          <el-form-item v-for="(role,index) in permissions" :key="index" :label="'权限'+(index+1)">
+            <my-el-select v-model="role.permissionId" placeholder="输入权限名称" ref=""
+              :doSelectList="getPermissionsOptions" tableName="sysRole"/>
+            <el-button type="danger" @click="cancelPermission(role,index)" style="margin-left: 10px" >删 除</el-button>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addRole">添 加</el-button>
+        <el-button type="primary" @click="addPermission">添 加</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updateRoles">确 定</el-button>
+        <el-button type="primary" @click="updatePermissions">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -34,7 +34,7 @@ import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
 
-import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles } from '@/api/table'
+import { getMainListByPage, deleteMainTable, getOptions, getPermissions, updatePermissions, getPermissionsOptions } from '@/api/table'
 
 export default {
   name: 'sysRole',
@@ -60,7 +60,7 @@ export default {
         ]
       },
       form: {},
-      roles: [],
+      permissions: [],
       // 表格配置
       dataSource: {
         tool: [{
@@ -125,7 +125,7 @@ export default {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               permission: '2010702', // 后期这个操作的权限，用来控制权限
-              handleRow: this.setRole
+              handleRow: this.setPermission
             },
             {
               label: '删除', // 操作名称
@@ -136,7 +136,7 @@ export default {
           ]
         }
       },
-      thisUserId: '',
+      thisRoleId: '',
       msg: {}
     }
   },
@@ -197,8 +197,12 @@ export default {
       });
     },
     deleteTable(index, row, label) {
+      console.log(row)
       this.open('此操作将永久删除该, 是否继续?', () => {
-        return deleteMainTable(this.tableName, row.id).then(response => {
+        let data = {
+          'roleId': row.roleId
+        }
+        return deleteMainTable(this.tableName, data).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'
@@ -207,11 +211,11 @@ export default {
         });
       });
     },
-    setRole(index, row, label) {
+    setPermission(index, row, label) {
       this.dialogVisible = true;
-      this.thisUserId = row.userId;
-      getRoles(row.userId).then(res => {
-        this.roles = res.data || []
+      this.thisRoleId = row.roleId;
+      getPermissions(row.roleId).then(res => {
+        this.permissions = res.data || []
       })
 
     },
@@ -225,26 +229,34 @@ export default {
         return Promise.resolve(res.data)
       })
     },
-    addRole() {
-      this.roles.push({
-        roleId: '',
-        roleName: ''
+    getPermissionsOptions(query, page) {
+      let params = {
+        "nameLike": query,
+        "page": page
+      }
+      return getPermissionsOptions(params).then(res => {
+        return Promise.resolve(res.data)
       })
     },
-    updateRoles() {
-      console.log(1111)
-      updateRoles(this.thisUserId,this.roles).then(res => {
+    addPermission() {
+      this.permissions.push({
+        permissionId: '',
+        permissionCode: ''
+      })
+    },
+    updatePermissions() {
+      updatePermissions(this.thisRoleId,this.permissions).then(res => {
         this.$message({
           type: 'success',
           message: '修改成功！'
         });
         this.dialogVisible = false;
-        this.thisUserId = '';
-        this.roles = []
+        this.thisRoleId = '';
+        this.permissions = []
       })
     },
-    cancelRole(role,index) {
-      this.roles.splice(index, 1)
+    cancelPermission(role, index) {
+      this.permissions.splice(index, 1)
     }
   }
 }

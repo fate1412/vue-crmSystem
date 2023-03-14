@@ -7,13 +7,13 @@
       @changeNum="changeNum"
     />
     <el-dialog
-      title="权限修改"
+      title="角色修改"
       :visible.sync="dialogVisible"
       width="30%">
       <span>
         <el-form ref="form" label-width="100px"
                  label-position="right">
-          <el-form-item v-for="(role,index) in roles" :key="index" :label="'权限'+(index+1)">
+          <el-form-item v-for="(role,index) in roles" :key="index" :label="'角色'+(index+1)">
             <my-el-select v-model="role.roleId" placeholder="输入角色名称" ref=""
               :doSelectList="getOptions" tableName="sysRole"/>
             <el-button type="danger" @click="cancelRole(role,index)" style="margin-left: 10px" >删 除</el-button>
@@ -208,7 +208,10 @@ export default {
     },
     deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
-        return deleteMainTable(this.tableName, row.id).then(response => {
+        let data = {
+          'userId': row.userId
+        }
+        return deleteMainTable(this.tableName, data).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'

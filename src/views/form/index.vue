@@ -229,7 +229,10 @@ export default {
         this.fetchData(this.tableName, this.id)
       } else {
         this.open('此操作将永久删除该, 是否继续?', () => {
-          return deleteMainTable(this.tableName, this.form.id).then(response => {
+          let data = {
+            'id': this.form.id
+          }
+          return deleteMainTable(this.tableName, data).then(response => {
             this.$message({
               type: 'success',
               message: '删除成功！'

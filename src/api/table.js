@@ -53,13 +53,11 @@ export function updateMainTable(tableName,data) {
   })
 }
 
-export function deleteMainTable(tableName,id) {
+export function deleteMainTable(tableName,data) {
   return request({
     url: '/'+ tableName + '/delete',
     method: 'delete',
-    data: {
-      id: id
-    }
+    data: data
   })
 }
 
@@ -106,6 +104,35 @@ export function updateRoles(id,userRolesList) {
       'id': id,
       'userRolesList': userRolesList
     }
+  })
+}
+
+export function getPermissions(id) {
+  return request({
+    url: '/sysRole/getPermissions',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
+export function updatePermissions(id,RolePermissionsList) {
+  return request({
+    url: '/sysRole/updatePermissions',
+    method: 'post',
+    data: {
+      'id': id,
+      'RolePermissionsList': RolePermissionsList
+    }
+  })
+}
+
+export function getPermissionsOptions(params) {
+  return request({
+    url: '/sysRole/getPermissionsOptions',
+    method: 'get',
+    params: params
   })
 }
 
