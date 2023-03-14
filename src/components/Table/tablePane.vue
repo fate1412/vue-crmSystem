@@ -264,7 +264,6 @@ export default {
     },
     getDetails(id, tableName) {
       tableName = tableName === undefined ? this.$route.name : tableName
-      console.log(id + '  ' + tableName)
       this.$router.push({
         name: 'Form',
         params: {

@@ -54,7 +54,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'work',
+        name: 'Work',
         // component: () => import('@/views/form/index'),
         meta: { title: '待办', icon: 'form' }
       }
