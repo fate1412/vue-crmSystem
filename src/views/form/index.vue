@@ -1,11 +1,20 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom: 20px; float: left">
-      <el-button @click="goBack">返回</el-button>
-    </div>
-    <div style="display: flex;justify-content: right;margin-bottom: 20px">
-      <el-button type="primary" @click="saveTable">{{ create || edit ? '提交' : '编辑' }}</el-button>
-      <el-button @click="cancelTable">{{ create || edit ? '取消' : '删除' }}</el-button>
+
+    <div style="display: block; height: 50px">
+      <div style="margin-bottom: 20px; float: left">
+        <el-button @click="goBack">返回</el-button>
+      </div>
+      <div style=" justify-content: right;margin-bottom: 20px; float: right">
+        <div v-if="create || edit">
+          <el-button v-if="this.isEdit" type="primary" @click="saveTable">提 交</el-button>
+          <el-button v-if="this.isEdit" @click="cancelTable">取 消</el-button>
+        </div>
+        <div v-else>
+          <el-button v-if="this.isEdit" type="primary" @click="saveTable">编 辑</el-button>
+          <el-button v-if="this.isDelete" type="danger" @click="cancelTable">删 除</el-button>
+        </div>
+      </div>
     </div>
 
     <h5>主对象</h5>
@@ -127,7 +136,10 @@ export default {
       tableColumns: [],
       disabled: true,
       edit: false,
-      create: true
+      create: true,
+      //权限
+      isDelete: false,
+      isEdit: false
     }
   },
   created() {
@@ -137,6 +149,8 @@ export default {
     this.tableName = params.tableName;
     this.id = params.tableId;
     this.disabled = params.disabled === undefined ? true : params.disabled;
+    this.isDelete = params.isDelete || false;
+    this.isEdit = params.isEdit || false;
     this.fetchData(this.tableName, this.id)
 
   },

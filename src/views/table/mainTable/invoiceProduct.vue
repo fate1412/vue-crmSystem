@@ -13,6 +13,7 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import { getMainListByPage, deleteMainTable } from '@/api/table'
+import { isPermission } from '@/utils/validate'
 
 export default {
   name: 'invoiceProduct',
@@ -49,6 +50,7 @@ export default {
           name: '新增',
           key: 1,
           handleClick: this.createTable,
+          show: isPermission("Invoice_Insert",this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
@@ -119,6 +121,7 @@ export default {
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
+              show: isPermission("Invoice_Delete",this.$store.state.user),
               handleRow: this.deleteTable
             }
           ]

@@ -31,3 +31,18 @@ export function validatAlphabets(str) {
   const reg = /^[A-Za-z]+$/
   return reg.test(str)
 }
+
+/**
+ 首字母大写
+ */
+export function toUpperCase(str) {
+  return (str.charAt(0).toUpperCase() + str.slice(1))
+}
+
+/**
+ * 权限验证
+ */
+export function isPermission(permissionCode, user) {
+  const permissionCodeList = user.permissionCodeList
+  return permissionCodeList.find(permission => permission.permissionCode === permissionCode)
+}

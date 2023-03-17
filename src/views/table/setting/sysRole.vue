@@ -33,6 +33,7 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
+import { isPermission } from '@/utils/validate'
 
 import { getMainListByPage, deleteMainTable, getOptions, getPermissions, updatePermissions, getPermissionsOptions } from '@/api/table'
 
@@ -66,8 +67,8 @@ export default {
         tool: [{
           name: '新增',
           key: 1,
-          permission: 2010701,
           handleClick: this.createTable,
+          show: isPermission("SysRole_Insert",this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
@@ -124,12 +125,14 @@ export default {
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              handleRow: this.setPermission
+              handleRow: this.setPermission,
+              show: isPermission('SysRolePermission_Edit',this.$store.state.user)
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              handleRow: this.deleteTable
+              handleRow: this.deleteTable,
+              show: isPermission('SysRole_Delete',this.$store.state.user)
             }
           ]
         }

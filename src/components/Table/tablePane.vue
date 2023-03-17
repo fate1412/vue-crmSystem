@@ -3,6 +3,7 @@
     <div v-if="dataSource.tool" class="tool" style="margin-top: 10px;margin-bottom: 10px">
       <el-button
         v-for="(item) in dataSource.tool"
+        v-if="item.show"
         :key="item.key"
         :style="{'background':item.bgColor,borderColor:item.bgColor}"
         :type="item.type || 'primary'"
@@ -176,6 +177,8 @@
 </template>
 
 <script>
+
+import { toUpperCase , isPermission } from '@/utils/validate'
 //  dataSource: {
 //          tool:[
 //            {
@@ -269,10 +272,12 @@ export default {
           goBackName: this.$route.name,
           tableName: tableName,
           tableId: id,
-          create: false
+          create: false,
+          isDelete: isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
         }
       })
-    }
+    },
   }
 }
 </script>

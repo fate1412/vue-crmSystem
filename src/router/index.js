@@ -126,19 +126,19 @@ export const constantRouterMap = [
       },
       {
         path: 'customTable',
-        name: 'CustomTable',
+        name: 'customTable',
         component: () => import('@/views/table/index'),
         meta: { title: '定制表' },
         children: [
           {
             path: 'custom1',
-            name: 'Custom1',
+            name: 'custom1',
             component: () => import('@/views/table/index?table=custom1'),
             meta: { title: '定制表1', icon: 'table' }
           },
           {
             path: 'custom2',
-            name: 'Custom2',
+            name: 'custom2',
             component: () => import('@/views/table/index?table=custom2'),
             meta: { title: '定制表2', icon: 'table' }
           }
@@ -206,7 +206,7 @@ export const constantRouterMap = [
   {
     path: '/setting',
     component: Layout,
-    name: 'Setting',
+    name: 'setting',
     meta: { title: '设置', icon: 'example' },
     children: [
       {
