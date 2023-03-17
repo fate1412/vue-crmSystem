@@ -13,17 +13,17 @@
       <span>
         <el-form ref="form" label-width="100px"
                  label-position="right">
-          <el-form-item v-for="(role,index) in permissions" :key="index" :label="'权限'+(index+1)">
-            <my-el-select v-model="role.permissionId" placeholder="输入权限名称" ref=""
+          <el-form-item v-for="(permission,index) in permissions" :key="index" :label="'权限'+(index+1)">
+            <my-el-select v-model="permission.permissionId" placeholder="输入权限名称" ref="" :initialName="permission.permissionDesc"
               :doSelectList="getPermissionsOptions" tableName="sysRole"/>
-            <el-button type="danger" @click="cancelPermission(role,index)" style="margin-left: 10px" >删 除</el-button>
+            <el-button type="danger" @click="cancelPermission(permission,index)" style="margin-left: 10px" >删 除</el-button>
           </el-form-item>
         </el-form>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addPermission">添 加</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updatePermissions">确 定</el-button>
+        <el-button type="primary" @click="updatePermissions">修 改</el-button>
       </span>
     </el-dialog>
   </div>
@@ -107,7 +107,7 @@ export default {
         handleSelectionChange: () => {
         },
         border: true,
-        isSelection: true, // 表格有多选时设置
+        isSelection: false, // 表格有多选时设置
         isOperation: true, // 表格有操作列时设置
         isIndex: false, // 列表序号
         loading: true, // loading
@@ -124,13 +124,11 @@ export default {
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
               handleRow: this.setPermission
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
               handleRow: this.deleteTable
             }
           ]
@@ -241,7 +239,8 @@ export default {
     addPermission() {
       this.permissions.push({
         permissionId: '',
-        permissionCode: ''
+        permissionCode: '',
+        permissionDesc: ''
       })
     },
     updatePermissions() {

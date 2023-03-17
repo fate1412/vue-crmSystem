@@ -4,18 +4,17 @@
       <el-button
         v-for="(item) in dataSource.tool"
         :key="item.key"
-        v-permission="item.permission"
-        class="filter-item"
         :style="{'background':item.bgColor,borderColor:item.bgColor}"
         :type="item.type || 'primary'"
+        class="filter-item"
         @click="item.handleClick(item.name,$event)"
       >
         {{ item.name }}
       </el-button>
     </div>
     <el-table
-      ref="table"
       v-loading="dataSource.loading"
+      ref="table"
       :border="!!dataSource.border"
       style="width: 100%;"
       :class="{ 'no-data': !dataSource.data || !dataSource.data.length }"
@@ -106,7 +105,8 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <el-link v-if="item.fixed || item.link" :underline="false"
+            <el-link v-if="item.fixed || item.link"
+                     :underline="false"
                      style="color: deepskyblue"
                      @click="getDetails(
                        scope.row[item.prop].id === undefined? scope.row[item.prop] : scope.row[item.prop].id,
@@ -140,7 +140,7 @@
               <div v-for="(item) in dataSource.operation.data" :key="item.label">
                 <template v-if="item.type!=='icon'">
                   <el-button
-                    v-permission="item.permission"
+                    v-if="item.show"
                     v-bind="item"
                     :type="item.type?item.type:''"
                     size="mini"
@@ -176,7 +176,6 @@
 </template>
 
 <script>
-import { getList, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
 //  dataSource: {
 //          tool:[
 //            {
@@ -227,8 +226,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      form:{},
-      tableColumns:[],
+      form: {},
+      tableColumns: [],
       create: false
       // currentPage4: 4
     }

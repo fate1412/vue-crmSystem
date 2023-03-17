@@ -43,7 +43,6 @@ export default {
         tool: [{
           name: '新增',
           key: 1,
-          permission: 2010701,
           handleClick: this.createTable,
           bgColor: ''//自定义按钮背景色
         }],
@@ -98,7 +97,7 @@ export default {
         handleSelectionChange: () => {
         },
         border: true,
-        isSelection: true, // 表格有多选时设置
+        isSelection: false, // 表格有多选时设置
         isOperation: true, // 表格有操作列时设置
         isIndex: false, // 列表序号
         loading: true, // loading
@@ -115,7 +114,6 @@ export default {
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
               handleRow: this.deleteTable
             }
           ]
@@ -182,17 +180,17 @@ export default {
     },
     deleteTable(index,row,label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
-        let data = {
+        const data = {
           'id': row.id
         }
         return deleteMainTable(this.tableName, data).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'
-          });
-          this.getList();
-        });
-      });
+          })
+          this.getList()
+        })
+      })
     }
   }
 }

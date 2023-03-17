@@ -167,7 +167,7 @@ export default {
             },
             {
               label: '删除', // 操作名称
-              type: 'danger',//为element btn属性则是按钮
+              type: 'danger', //为element btn属性则是按钮
               permission: '2010702', // 后期这个操作的权限，用来控制权限
               handleRow: this.handleRow
             }
@@ -209,7 +209,7 @@ export default {
       //   data.shareId = this.msg.shareId
       // }
       this.dataSource.loading = true
-      getMainListByPage("customer").then(res => {
+      getMainListByPage('customer').then(res => {
         this.dataSource.loading = false
         console.log(res)
         if (res.success) {

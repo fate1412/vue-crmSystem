@@ -24,6 +24,7 @@
 
         <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="form[column.prop]"
                       :disabled="(!create && column.disabled ) || disabled" placeholder=""
+                      :initialName="form[column.prop + 'R'].name"
                       :doSelectList="getOptions" :tableName="form[column.prop + 'R'].tableName"
         />
 
@@ -76,7 +77,7 @@
 
             <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="scope.row[column.prop]"
                           :disabled="(!create && column.disabled ) || disabled"
-                          placeholder=""
+                          placeholder="" :initialName="scope.row[column.prop + 'R'].tableName"
                           :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>

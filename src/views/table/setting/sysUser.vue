@@ -14,7 +14,7 @@
         <el-form ref="form" label-width="100px"
                  label-position="right">
           <el-form-item v-for="(role,index) in roles" :key="index" :label="'角色'+(index+1)">
-            <my-el-select v-model="role.roleId" placeholder="输入角色名称" ref=""
+            <my-el-select v-model="role.roleId" placeholder="输入角色名称" ref="" :initialName="role.roleName"
               :doSelectList="getOptions" tableName="sysRole"/>
             <el-button type="danger" @click="cancelRole(role,index)" style="margin-left: 10px" >删 除</el-button>
           </el-form-item>
@@ -23,7 +23,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addRole">添 加</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updateRoles">确 定</el-button>
+        <el-button type="primary" @click="updateRoles">修 改</el-button>
       </span>
     </el-dialog>
   </div>
@@ -33,6 +33,8 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
+
+import { user } from '@/store/modules/user'
 
 import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles } from '@/api/table'
 
@@ -117,7 +119,7 @@ export default {
         handleSelectionChange: () => {
         },
         border: true,
-        isSelection: true, // 表格有多选时设置
+        isSelection: false, // 表格有多选时设置
         isOperation: true, // 表格有操作列时设置
         isIndex: false, // 列表序号
         loading: true, // loading
@@ -134,13 +136,13 @@ export default {
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
+              show: this.isPermission(1),
               handleRow: this.setRole
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
+              show: false,
               handleRow: this.deleteTable
             }
           ]
@@ -245,7 +247,6 @@ export default {
       })
     },
     updateRoles() {
-      console.log(1111)
       updateRoles(this.thisUserId,this.roles).then(res => {
         this.$message({
           type: 'success',
@@ -258,6 +259,11 @@ export default {
     },
     cancelRole(role,index) {
       this.roles.splice(index, 1)
+    },
+    isPermission(permission) {
+      console.log(111111)
+      console.log(user)
+
     }
   }
 }
