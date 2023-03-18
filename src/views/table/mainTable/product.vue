@@ -12,7 +12,7 @@
 <script>
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
-import { isPermission } from '@/utils/validate'
+import { isPermission, toUpperCase } from '@/utils/validate'
 
 import { getMainListByPage, deleteMainTable } from '@/api/table'
 
@@ -196,7 +196,9 @@ export default {
         params: {
           goBackName: this.tableName,
           tableName: this.tableName,
-          disabled: false
+          disabled: false,
+          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
         }
       })
     },

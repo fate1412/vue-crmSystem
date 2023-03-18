@@ -227,6 +227,12 @@ export const constantRouterMap = [
         // component: () => import('@/views/table/setting/index'),
         component: () => import('@/views/table/suggestion'),
         meta: { title: '定制化管理', icon: 'table' }
+      },
+      {
+        path: '/flow',
+        name: 'sysFlow',
+        component: () => import('@/views/table/flow'),
+        meta: { title: '流程管理', icon: 'table' }
       }
     ]
   },

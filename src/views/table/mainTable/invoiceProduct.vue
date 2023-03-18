@@ -13,7 +13,7 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import { getMainListByPage, deleteMainTable } from '@/api/table'
-import { isPermission } from '@/utils/validate'
+import { isPermission, toUpperCase } from '@/utils/validate'
 
 export default {
   name: 'invoiceProduct',
@@ -178,7 +178,9 @@ export default {
         params: {
           goBackName: this.tableName,
           tableName: this.tableName,
-          disabled: false
+          disabled: false,
+          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
         }
       })
     },

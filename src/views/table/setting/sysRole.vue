@@ -33,7 +33,7 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
-import { isPermission } from '@/utils/validate'
+import { isPermission, toUpperCase } from '@/utils/validate'
 
 import { getMainListByPage, deleteMainTable, getOptions, getPermissions, updatePermissions, getPermissionsOptions } from '@/api/table'
 
@@ -148,7 +148,16 @@ export default {
     getList() {
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
-      getMainListByPage(this.tableName, pageData.pageNum, pageData.pageSize).then(res => {
+      const msg = this.msg
+      let data = {
+        'page':  pageData.pageNum,
+        'pageSize': pageData.pageSize,
+        'like' : {
+          'roleId': msg.roleId,
+          'roleName': msg.roleName
+        }
+      }
+      getMainListByPage(this.tableName, data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
@@ -179,7 +188,9 @@ export default {
         params: {
           goBackName: this.tableName,
           tableName: this.tableName,
-          disabled: false
+          disabled: false,
+          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
         }
       })
     },

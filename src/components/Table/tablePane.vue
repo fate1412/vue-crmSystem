@@ -108,6 +108,7 @@
           <template slot-scope="scope">
             <el-link v-if="item.fixed || item.link"
                      :underline="false"
+                     :disabled="item.disabled"
                      style="color: deepskyblue"
                      @click="getDetails(
                        scope.row[item.prop].id === undefined? scope.row[item.prop] : scope.row[item.prop].id,

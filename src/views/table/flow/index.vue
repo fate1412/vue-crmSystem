@@ -12,24 +12,28 @@
 <script>
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
+import { getMainListByPage, deleteMainTable } from '@/api/table'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
-import { getMainListByPage, deleteMainTable } from '@/api/table'
-
 export default {
-  name: 'stockList',
+  name: 'sysFlow',
   components: { filterPane, tablePane },
   data() {
     return {
-      tableName: 'stockList',
+      tableName: 'sysFlow',
       // 搜索栏配置
       filterData: {
         timeSelect: false,
         elinput: [
           {
-            name: '备货单Id',
+            name: '流程ID',
             width: 230,
             key: 'id'
+          },
+          {
+            name: '流程名称',
+            width: 230,
+            key: 'name'
           }
         ]
       },
@@ -40,40 +44,32 @@ export default {
           name: '新增',
           key: 1,
           handleClick: this.createTable,
-          show: isPermission("StockList_Insert",this.$store.state.user),
+          show: isPermission('Customer_Insert',this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
         cols: [
           {
-            label: '备货单Id',
+            label: '流程ID',
             // width: 100,
             prop: 'id',
             link: true
           },
           {
-            label: '备货日期',
+            label: '流程名称',
             // width: 100,
-            prop: 'stockUpDate'
+            prop: 'name'
           },
           {
-            label: '总价/元',
+            label: '关联表',
             // width: 100,
-            prop: 'prices'
+            prop: 'relevanceTableR',
+            link: true,
+            disabled: true
           },
           {
-            label: '是否完成备货',
-            prop: 'isStockUp',
-            // width: 230
-          },
-          {
-            label: '是否完成受理',
-            prop: 'isAcceptance',
-            // width: 230
-          },
-          {
-            label: '是否紧急',
-            prop: 'isPressing',
+            label: '触发动作',
+            prop: 'triggerAction'
             // width: 230
           },
           {
@@ -97,12 +93,6 @@ export default {
             prop: 'updaterR',
             link: true,
             click: this.getDetails
-          },
-          {
-            label: '负责人',
-            prop: 'ownerR',
-            link: true,
-            click: this.getDetails
           }
         ], // 表格的列数据
         handleSelectionChange: () => {
@@ -120,22 +110,28 @@ export default {
         operation: {
           // 表格有操作列时设置
           label: '操作', // 列名
-          width: '100', // 根据实际情况给宽度
+          width: '150', // 根据实际情况给宽度
           data: [ // 功能数组
+            {
+              label: '编辑流程', // 操作名称
+              type: 'primary', //为element btn属性则是按钮
+              handleRow: this.deleteTable,
+              show: isPermission('Customer_Edit',this.$store.state.user)
+            },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              show: isPermission("StockList_Delete",this.$store.state.user),
-              handleRow: this.deleteTable
+              handleRow: this.deleteTable,
+              show: isPermission('Customer_Edit',this.$store.state.user)
             }
           ]
         }
       },
+      dialogAdd: true,
       msg: {}
     }
   },
   created() {
-    console.log("table")
     this.getList()
   },
   methods: {
@@ -148,17 +144,16 @@ export default {
         'pageSize': pageData.pageSize,
         'like' : {
           'id': msg.id,
+          'name': msg.name
         }
       }
       getMainListByPage(this.tableName, data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
           } else {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.data = []
             this.dataSource.pageData.total = 0
           }
@@ -184,8 +179,8 @@ export default {
           goBackName: this.tableName,
           tableName: this.tableName,
           disabled: false,
-          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
+          isDelete: isPermission((toUpperCase('customer')+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase('customer')+'_Edit'),this.$store.state.user)
         }
       })
     },
