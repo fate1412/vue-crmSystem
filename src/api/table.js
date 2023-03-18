@@ -9,14 +9,11 @@ export function getList(params) {
   })
 }
 
-export function getMainListByPage(tableName,thisPage,pageSize) {
+export function getMainListByPage(tableName,data) {
   return request({
     url: '/'+ tableName + '/page/select',
-    method: 'get',
-    params: {
-      'thisPage': thisPage,
-      'pageSize': pageSize
-    }
+    method: 'post',
+    data: data
   })
 }
 
@@ -133,6 +130,17 @@ export function getPermissionsOptions(params) {
     url: '/sysRole/getPermissionsOptions',
     method: 'get',
     params: params
+  })
+}
+
+export function resetPasswd(userId,passwd) {
+  return request({
+    url: '/sysUser/resetPasswd',
+    method: 'post',
+    data: {
+      userId: userId,
+      password: passwd
+    }
   })
 }
 

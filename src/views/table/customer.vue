@@ -38,7 +38,7 @@ export default {
           }
         ]
       },
-      form:{},
+      form: {},
       // 表格配置
       dataSource: {
         tool: [{
@@ -144,14 +144,27 @@ export default {
   },
   created() {
     console.log("table")
+    console.log(1111)
     this.getList()
   },
   methods: {
     getList() {
+      console.log(1111)
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
       const tableName = this.$route.name
-      getMainListByPage(tableName, pageData.pageNum, pageData.pageSize).then(res => {
+      const msg = this.msg
+      let data = {
+        'page':  pageData.pageNum,
+        'pageSize': pageData.pageSize
+        'like' : {
+          'id': 1,
+          'name': msg.name
+        }
+      }
+      console.log(1111)
+      console.log(data)
+      getMainListByPage(tableName, data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {

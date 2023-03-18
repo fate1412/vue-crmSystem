@@ -139,7 +139,16 @@ export default {
     getList() {
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
-      getMainListByPage(this.tableName, pageData.pageNum, pageData.pageSize).then(res => {
+      const msg = this.msg
+      let data = {
+        'page':  pageData.pageNum,
+        'pageSize': pageData.pageSize,
+        'like' : {
+          'id': msg.id,
+          'customerId': msg.customerId,
+        }
+      }
+      getMainListByPage(this.tableName, data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {

@@ -26,6 +26,19 @@
         <el-button type="primary" @click="updateRoles">修 改</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="修改密码"
+      :visible.sync="passwdVisible"
+      width="30%">
+      <span>
+        <el-input v-model="userPasswd"/>
+      </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="passwdVisible = false">取 消</el-button>
+        <el-button type="primary" @click="resetPasswd">修 改</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -34,7 +47,7 @@ import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
 
-import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles } from '@/api/table'
+import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles, resetPasswd } from '@/api/table'
 import { isPermission } from '@/utils/validate'
 
 export default {
@@ -44,6 +57,7 @@ export default {
     return {
       tableName: 'sysUser',
       dialogVisible: false,
+      passwdVisible: false,
       // 搜索栏配置
       filterData: {
         timeSelect: false,
@@ -130,8 +144,14 @@ export default {
         operation: {
           // 表格有操作列时设置
           label: '操作', // 列名
-          width: '150', // 根据实际情况给宽度
+          width: '200', // 根据实际情况给宽度
           data: [ // 功能数组
+            {
+              label: '重置密码', // 操作名称
+              type: 'warning', //为element btn属性则是按钮
+              show: isPermission('SysUserRole_Edit',this.$store.state.user),
+              handleRow: this.showResetPasswd
+            },
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
@@ -148,6 +168,7 @@ export default {
         }
       },
       thisUserId: '',
+      userPasswd: '',
       msg: {}
     }
   },
@@ -173,6 +194,7 @@ export default {
     },
     filterMsg(msg) {
       this.msg = msg
+      console.log(msg)
       this.getList()
     },
     changeSize(size) {
@@ -258,6 +280,20 @@ export default {
     },
     cancelRole(role,index) {
       this.roles.splice(index, 1)
+    },
+    showResetPasswd(index, row, label) {
+      this.userPasswd = ''
+      this.thisUserId = row.userId;
+      this.passwdVisible = true
+    },
+    resetPasswd() {
+      resetPasswd(this.thisUserId, this.userPasswd).then(res => {
+        this.$message({
+          type: 'success',
+          message: '修改成功！'
+        });
+        this.passwdVisible = false
+      })
     }
   }
 }

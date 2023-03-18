@@ -116,29 +116,28 @@ export default {
   },
   methods: {
     handleSearch() {
-      console.log('搜索成功', this.listQuery)
-      const data = this.$global.deepClone(this.listQuery)
-      if (this.dateRange && this.dateRange[0] !== '') {
-        const startTime = this.$moment(this.dateRange[0]).format('YYYY-MM-DD') + ' 00:00:00'
-        const endTime = this.$moment(this.dateRange[1]).format('YYYY-MM-DD') + ' 23:59:59'
-        data.beginDate = startTime
-        data.endDate = endTime
-      }
-      Object.keys(data).forEach(function(key) {
-        if (data[key] === '') {
-          delete data[key]
-        }
-      })
-      this.$emit('filterMsg', data)
+      // const data = this.$global.deepClone(this.listQuery)
+      // if (this.dateRange && this.dateRange[0] !== '') {
+      //   const startTime = this.$moment(this.dateRange[0]).format('YYYY-MM-DD') + ' 00:00:00'
+      //   const endTime = this.$moment(this.dateRange[1]).format('YYYY-MM-DD') + ' 23:59:59'
+      //   data.beginDate = startTime
+      //   data.endDate = endTime
+      // }
+      // Object.keys(data).forEach(function(key) {
+      //   if (data[key] === '') {
+      //     delete data[key]
+      //   }
+      // })
+      this.$emit('filterMsg', this.listQuery)
     },
     handleRest() {
-      const data = this.$global.deepClone(this.listQuery)
-      Object.keys(data).forEach(function(key) {
-        data[key] = ''
-      })
-      this.listQuery = data
+      // const data = this.$global.deepClone(this.listQuery)
+      // Object.keys(data).forEach(function(key) {
+      //   data[key] = ''
+      // })
+      this.listQuery = []
       this.dateRange = ['', '']
-      console.log('重置成功', this.listQuery)
+      // console.log('重置成功', this.listQuery)
     }
   }
 }

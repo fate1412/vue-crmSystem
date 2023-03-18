@@ -53,27 +53,10 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       console.log("获取用户信息")
-      // const data = { 'roles': 'admin', 'name': 'admin', 'avatar': 'https://baidu.com' }
-      // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-      //   commit('SET_ROLES', data.roles)
-      // } else {
-      //   reject('getInfo: roles must be a non-null array !')
-      // }
-      // commit('SET_NAME', data.name)
-      // commit('SET_AVATAR', data.avatar)
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
           const permissions = response.data
-          // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-          //   commit('SET_ROLES', data.roles)
-          // } else {
-          //   reject('getInfo: roles must be a non-null array !')
-          // }
-          if (permissions && permissions.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_PERMISSIONS', permissions)
-          } else {
-            reject('getInfo: roles must be a non-null array !')
-          }
+          commit('SET_PERMISSIONS', permissions || [])
           // commit('SET_NAME', data.name)
           // commit('SET_AVATAR', data.avatar)
           resolve(response)

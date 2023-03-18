@@ -63,10 +63,6 @@ service.interceptors.response.use(
           })
         })
       }
-      //没有权限
-      if (res.code === 3001) {
-        console.log("没有权限")
-      }
       return Promise.reject('error')
     } else {
       return response.data
