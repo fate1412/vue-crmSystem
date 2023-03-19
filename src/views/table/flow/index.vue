@@ -6,21 +6,56 @@
       @changeSize="changeSize"
       @changeNum="changeNum"
     />
+
+    <el-dialog
+      :title="thisFlow.name+'  流程设置'"
+      :visible.sync="dialogVisible"
+      width="35%">
+
+      <el-timeline>
+        <div style="display: flex;">
+          <div style="margin-top: 15px">
+            <el-timeline-item
+              v-for="(flowPoint, index) in flowPoints" :key="index"
+              style="width: 120px; height: 60px">
+              {{ "审批节点"+(index+1) }}
+            </el-timeline-item>
+          </div>
+          <div>
+            <div v-for="(flowPoint, index) in flowPoints" :key="index" style="margin-bottom: 20px">
+              审批人：
+              <my-el-select v-model="flowPoint.approver" placeholder="输入审批人名称" ref="" :initialName="flowPoint.approverR"
+                            :doSelectList="getOptions" tableName="sysUser"/>
+              <el-button type="danger" @click="cancelPoint(flowPoint,index)" style="margin-left: 10px" >删 除</el-button>
+            </div>
+          </div>
+        </div>
+
+      </el-timeline>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addPoint">添 加</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updatePoints">修 改</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
-import { getMainListByPage, deleteMainTable } from '@/api/table'
+import myElSelect from '@/components/Table/my-el-select'
+import { getMainListByPage, deleteMainTable, getOptions, getFlowPoints, updateFlowPoints } from '@/api/table'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
 export default {
   name: 'sysFlow',
-  components: { filterPane, tablePane },
+  components: { filterPane, tablePane, myElSelect },
   data() {
     return {
       tableName: 'sysFlow',
+      dialogVisible: false,
       // 搜索栏配置
       filterData: {
         timeSelect: false,
@@ -37,14 +72,14 @@ export default {
           }
         ]
       },
-      form: {},
+      flowPoints: [],
       // 表格配置
       dataSource: {
         tool: [{
           name: '新增',
           key: 1,
           handleClick: this.createTable,
-          show: isPermission('Customer_Insert',this.$store.state.user),
+          show: isPermission('Customer_Insert', this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
@@ -66,11 +101,6 @@ export default {
             prop: 'relevanceTableR',
             link: true,
             disabled: true
-          },
-          {
-            label: '触发动作',
-            prop: 'triggerAction'
-            // width: 230
           },
           {
             label: '创建时间',
@@ -115,19 +145,19 @@ export default {
             {
               label: '编辑流程', // 操作名称
               type: 'primary', //为element btn属性则是按钮
-              handleRow: this.deleteTable,
-              show: isPermission('Customer_Edit',this.$store.state.user)
+              handleRow: this.openPoint,
+              show: isPermission('Customer_Edit', this.$store.state.user)
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               handleRow: this.deleteTable,
-              show: isPermission('Customer_Edit',this.$store.state.user)
+              show: isPermission('Customer_Edit', this.$store.state.user)
             }
           ]
         }
       },
-      dialogAdd: true,
+      thisFlow: {},
       msg: {}
     }
   },
@@ -140,9 +170,9 @@ export default {
       const pageData = this.dataSource.pageData
       const msg = this.msg
       let data = {
-        'page':  pageData.pageNum,
+        'page': pageData.pageNum,
         'pageSize': pageData.pageSize,
-        'like' : {
+        'like': {
           'id': msg.id,
           'name': msg.name
         }
@@ -179,8 +209,8 @@ export default {
           goBackName: this.tableName,
           tableName: this.tableName,
           disabled: false,
-          isDelete: isPermission((toUpperCase('customer')+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase('customer')+'_Edit'),this.$store.state.user)
+          isDelete: isPermission((toUpperCase('customer') + '_Delete'), this.$store.state.user),
+          isEdit: isPermission((toUpperCase('customer') + '_Edit'), this.$store.state.user)
         }
       })
     },
@@ -198,7 +228,7 @@ export default {
         });
       });
     },
-    deleteTable(index,row,label) {
+    deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
         let data = {
           'id': row.id
@@ -211,7 +241,52 @@ export default {
           this.getList();
         });
       });
-    }
+    },
+    openPoint(index, row, label) {
+      this.dialogVisible = true
+      this.thisFlow = row
+      getFlowPoints(row.id).then(res => {
+        this.flowPoints = res.data || []
+      })
+    },
+    cancelPoint(flowPoint,index) {
+      this.flowPoints.splice(index, 1)
+    },
+    addPoint() {
+      this.flowPoints.push({
+        approver: '',
+        approverR: ''
+      })
+    },
+    updatePoints() {
+      let data = {
+        'flowId': this.thisFlow.id,
+        'flowPoints': this.flowPoints
+      }
+      for(let i=0; i< this.flowPoints.length; i++) {
+        data.flowPoints[i].flowId = this.thisFlow.id
+        data.flowPoints[i].panelPoint = i+1
+      }
+      updateFlowPoints(data).then(res => {
+        this.$message({
+          type: 'success',
+          message: '修改成功！'
+        });
+        this.dialogVisible = false;
+        this.thisFlow = {};
+        this.flowPoints = []
+      })
+    },
+    getOptions(query, page, tableName) {
+      let params = {
+        "nameLike": query,
+        "page": page,
+        "tableName": tableName
+      }
+      return getOptions(params).then(res => {
+        return Promise.resolve(res.data)
+      })
+    },
   }
 }
 </script>

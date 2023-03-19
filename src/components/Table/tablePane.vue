@@ -117,7 +117,15 @@
             >
               {{ scope.row[item.prop].name === undefined? scope.row[item.prop] : scope.row[item.prop].name }}
             </el-link>
-            <div v-else>{{ scope.row[item.prop] }}</div>
+            <div v-else>
+              <div v-if="scope.row[item.prop] === true" style="color: lightgreen">
+                {{ '是' }}
+              </div>
+              <div v-else-if="scope.row[item.prop] === false" style="color: red">
+                {{ '否' }}
+              </div>
+              <div v-else>{{ scope.row[item.prop]}}</div>
+            </div>
           </template>
         </el-table-column>
       </template>

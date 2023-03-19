@@ -97,6 +97,10 @@ export default {
             prop: 'ownerR',
             link: true,
             click: this.getDetails
+          },
+          {
+            label: '是否通过',
+            prop: 'pass'
           }
         ], // 表格的列数据
         handleSelectionChange: () => {

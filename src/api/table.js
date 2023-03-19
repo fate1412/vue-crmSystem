@@ -144,4 +144,22 @@ export function resetPasswd(userId,passwd) {
   })
 }
 
+export function getFlowPoints(id) {
+  return request({
+    url: '/sysFlow/getFlowPoints',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
+export function updateFlowPoints(data) {
+  return request({
+    url: '/sysFlow/updateFlowPoints',
+    method: 'post',
+    data: data
+  })
+}
+
 
