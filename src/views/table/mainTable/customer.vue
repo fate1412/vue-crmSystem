@@ -100,7 +100,8 @@ export default {
           },
           {
             label: '是否通过',
-            prop: 'pass'
+            prop: 'pass',
+            width: 70
           }
         ], // 表格的列数据
         handleSelectionChange: () => {
