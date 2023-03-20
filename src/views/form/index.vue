@@ -145,6 +145,7 @@ export default {
   created() {
     const params = this.$route.params
     this.create = params.create === undefined ? true : params.create
+    console.log(params.goBackName)
     this.goBackName = params.goBackName;
     this.tableName = params.tableName;
     this.id = params.tableId;
