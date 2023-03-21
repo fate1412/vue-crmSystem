@@ -162,4 +162,12 @@ export function updateFlowPoints(data) {
   })
 }
 
+export function approve(data) {
+  return request({
+    url: '/sysFlowSession/approve',
+    method: 'post',
+    data: data
+  })
+}
+
 
