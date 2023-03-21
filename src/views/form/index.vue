@@ -86,7 +86,7 @@
 
             <my-el-select v-else-if="column.formType==='Select' && column.link" v-model="scope.row[column.prop]"
                           :disabled="(!create && column.disabled ) || disabled"
-                          placeholder="" :initialName="scope.row[column.prop + 'R'].tableName"
+                          placeholder="" :initialName="scope.row[column.prop + 'R'].name"
                           :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>

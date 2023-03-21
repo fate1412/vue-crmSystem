@@ -117,6 +117,17 @@
             >
               {{ scope.row[item.prop].name === undefined? scope.row[item.prop] : scope.row[item.prop].name }}
             </el-link>
+<!--            审批状态-->
+            <div v-else-if="item.pass">
+              <div v-if="scope.row[item.prop] === '未审批'">
+                {{ '未审批' }}
+              </div>
+              <div v-else-if="scope.row[item.prop] === '已通过'" style="color: lightgreen">
+                {{ '已通过' }}
+              </div>
+              <div v-else style="color: red" >{{ '已拒绝' }}</div>
+            </div>
+<!--            波尔类型-->
             <div v-else>
               <div v-if="scope.row[item.prop] === true" style="color: lightgreen">
                 {{ '是' }}
