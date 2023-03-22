@@ -57,7 +57,7 @@
         <el-switch v-else-if="column.formType==='Switch'" v-model="form[column.prop]"
                    :disabled="(!create && column.disabled ) || disabled"/>
         <!--        Input-->
-        <el-input v-if="column.formType==='Input'" v-model="form[column.prop]"
+        <el-input v-else-if="column.formType==='Input'" v-model="form[column.prop]"
                   :disabled="(!create && column.disabled ) || disabled"/>
       </el-form-item>
 

@@ -65,16 +65,6 @@ export function getTables() {
   })
 }
 
-export function getTableColumns(tableName) {
-  return request({
-    url: '/custom/tableColumns',
-    method: 'get',
-    params: {
-      'tableName': tableName
-    }
-  })
-}
-
 export function getOptions(params) {
   return request({
     url: '/'+ params.tableName + '/getOptions',

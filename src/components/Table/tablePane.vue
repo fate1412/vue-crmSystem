@@ -244,7 +244,8 @@ export default {
     // eslint-disable-next-line vue/require-default-prop
     dataSource: {
       type: Object
-    }
+    },
+    rowClick: Function
   },
   data() {
     return {
@@ -283,6 +284,9 @@ export default {
     // 点击行即可选中
     getRowData(row) {
       this.$refs.table.toggleRowSelection(row)
+      if (this.rowClick !== undefined) {
+        this.rowClick(row)
+      }
     },
     getDetails(id, tableName) {
       tableName = tableName === undefined ? this.$route.name : tableName
