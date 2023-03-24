@@ -126,13 +126,13 @@ export default {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               handleRow: this.setPermission,
-              show: isPermission('SysRolePermission_Edit',this.$store.state.user)
+              hasPermission: isPermission('SysRolePermission_Edit',this.$store.state.user)
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               handleRow: this.deleteTable,
-              show: isPermission('SysRole_Delete',this.$store.state.user)
+              hasPermission: isPermission('SysRole_Delete',this.$store.state.user)
             }
           ]
         }

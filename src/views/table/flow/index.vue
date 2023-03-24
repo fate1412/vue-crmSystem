@@ -79,7 +79,7 @@ export default {
           name: '新增',
           key: 1,
           handleClick: this.createTable,
-          show: isPermission('Customer_Insert', this.$store.state.user),
+          show: isPermission('SysFlow_Insert', this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
@@ -146,13 +146,13 @@ export default {
               label: '编辑流程', // 操作名称
               type: 'primary', //为element btn属性则是按钮
               handleRow: this.openPoint,
-              show: isPermission('Customer_Edit', this.$store.state.user)
+              hasPermission: isPermission('SysFlow_Edit', this.$store.state.user)
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               handleRow: this.deleteTable,
-              show: isPermission('Customer_Edit', this.$store.state.user)
+              hasPermission: isPermission('SysFlow_Delete', this.$store.state.user)
             }
           ]
         }
@@ -209,8 +209,8 @@ export default {
           goBackName: this.tableName,
           tableName: this.tableName,
           disabled: false,
-          isDelete: isPermission((toUpperCase('customer') + '_Delete'), this.$store.state.user),
-          isEdit: isPermission((toUpperCase('customer') + '_Edit'), this.$store.state.user)
+          isDelete: isPermission((toUpperCase(this.tableName) + '_Delete'), this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName) + '_Edit'), this.$store.state.user)
         }
       })
     },

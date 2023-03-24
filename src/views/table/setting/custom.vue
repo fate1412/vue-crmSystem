@@ -7,13 +7,27 @@
         :rowClick="getColumnList"
       />
     </div>
-    <el-divider direction="vertical"></el-divider>
-    <div style="width: 50%">
+
+    <div v-if="showColumns" style="width: 50%">
       <filter-pane :filter-data="column.filterData" @filterMsg="columnFilterMsg"/>
       <table-pane
         :data-source="column.dataSource"
       />
     </div>
+    <el-drawer
+      :title="detail.title"
+      :visible.sync="drawer"
+      direction="rtl"
+      size="80%"
+    >
+      <my-form
+        :status="detail.status"
+        :tableName="detail.tableName"
+        :id="detail.id"
+        :goBack="FormGoBack"
+        :submit="saveData"
+      />
+    </el-drawer>
   </div>
 </template>
 
@@ -21,17 +35,21 @@
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
+import myForm from '@/components/Table/form'
 
-import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles, resetPasswd } from '@/api/table'
+import { getMainListByPage, deleteMainTable, addMainTable } from '@/api/table'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
 
 export default {
   name: "custom",
-  components: { filterPane, tablePane, myElSelect },
+  components: { filterPane, tablePane, myElSelect, myForm },
   data() {
     return {
+      drawer: false,
+      showColumns: false,
       table: {
+        tableName: 'tableDict',
         // 搜索栏配置
         filterData: {
           timeSelect: false,
@@ -50,15 +68,10 @@ export default {
             name: '新增',
             key: 1,
             handleClick: this.createTable,
-            show: true,
-            // show: isPermission("SysRole_Insert",this.$store.state.user),
+            show: isPermission("TableDict_Insert",this.$store.state.user),
             bgColor: ''//自定义按钮背景色
           }],
-          data: [
-            {
-              'name': 1
-            }
-          ], // 表格数据
+          data: [], // 表格数据
           cols: [
             {
               label: '表名',
@@ -92,14 +105,17 @@ export default {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteTable,
-                show: true
-                // show: isPermission('SysRole_Delete',this.$store.state.user)
+                hasPermission: isPermission('TableDict_Delete',this.$store.state.user),
+                show: function(index, row, label) {
+                  return row.custom
+                }
               }
             ]
           }
         }
       },
       column: {
+        tableName: 'columns',
         // 搜索栏配置
         filterData: {
           timeSelect: false,
@@ -117,16 +133,11 @@ export default {
           tool: [{
             name: '新增',
             key: 1,
-            handleClick: this.createTable,
-            show: true,
-            // show: isPermission("SysRole_Insert",this.$store.state.user),
+            handleClick: this.createColumn,
+            show: isPermission("Columns_Edit",this.$store.state.user),
             bgColor: ''//自定义按钮背景色
           }],
-          data: [
-            {
-              'name': 1
-            }
-          ], // 表格数据
+          data: [], // 表格数据
           cols: [
             {
               label: '字段名',
@@ -165,15 +176,19 @@ export default {
                 label: '编辑', // 操作名称
                 type: 'primary', //为element btn属性则是按钮
                 handleRow: this.columnEdit,
-                show: true
-                // show: isPermission('SysRole_Delete',this.$store.state.user)
+                hasPermission: isPermission('Columns_Edit',this.$store.state.user),
+                show: function(index, row, label) {
+                  return (row.custom || (row.columnType===1 && !row.link)) && !row.disabled
+                }
               },
               {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteTable,
-                show: true
-                // show: isPermission('SysRole_Delete',this.$store.state.user)
+                hasPermission: isPermission('Columns_Edit',this.$store.state.user),
+                show: function(index, row, label) {
+                  return row.custom
+                }
               }
             ]
           }
@@ -181,7 +196,23 @@ export default {
       },
       tableMsg: {},
       columnMsg: {},
-      thisTable: ''
+      thisTable: {},
+      detail: {
+        status: {
+          disabled: true,
+          edit: false,
+          create: false,
+          //权限
+          isDelete: false,
+          isEdit: false,
+          hasCustom: true
+        },
+        tableName: '',
+        id: '',
+        title: ''
+      },
+      useSubmit: true,
+
     }
   },
   created() {
@@ -189,19 +220,23 @@ export default {
   },
   methods: {
     getTableList() {
+      const tableName = this.table.tableName
       const msg = this.tableMsg
       let data = {
         'like' : {
           'showName': msg.showName
         }
       }
-      getMainListByPage('tableDict', data).then(res => {
+      getMainListByPage(tableName, data).then(res => {
         if (res.success) {
           this.table.dataSource.data = res.data.tableDataList
         }
       })
     },
     getColumnList(row) {
+      this.showColumns = true
+      const tableName = this.column.tableName
+      this.thisTable = row
       const msg = this.columnMsg
       let data = {
         'like' : {
@@ -209,7 +244,7 @@ export default {
           'showName': msg.showName
         }
       }
-      getMainListByPage('tableColumnDict', data).then(res => {
+      getMainListByPage(tableName, data).then(res => {
         if (res.success) {
           this.column.dataSource.data = res.data.tableDataList
         }
@@ -221,7 +256,7 @@ export default {
     },
     columnFilterMsg(msg) {
       this.columnMsg = msg
-      // this.getList()
+      this.getColumnList(this.thisTable)
     },
     open(message, operation) {
       this.$confirm(message, '提示', {
@@ -237,19 +272,42 @@ export default {
         });
       });
     },
+    createTable() {
+      this.useSubmit = false
+      const tableName = this.table.tableName
+      this.detail.tableName = tableName
+      this.detail.id = 0
+      this.detail.title = '新建表'
+      this.detail.status.create = true
+      this.detail.status.disabled = false
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+      this.drawer = true;
+    },
+    createColumn() {
+      this.useSubmit = true
+      const tableName = this.column.tableName
+      this.detail.tableName = tableName
+      this.detail.id = 0
+      this.detail.title = '新建字段'
+      this.detail.status.create = true
+      this.detail.status.disabled = false
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+      this.drawer = true;
+    },
     columnEdit(index, row, label) {
-      const tableName = 'tableColumnDict'
-      this.$router.push({
-        name: 'Form',
-        params: {
-          goBackName: this.$route.name,
-          tableName: tableName,
-          tableId: row.id,
-          create: false,
-          isDelete: isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
-        }
-      })
+      this.useSubmit = false
+      const tableName = this.column.tableName
+      this.drawer = true;
+      this.detail.tableName = tableName
+      this.detail.id = row.id
+      this.detail.title = row.showName
+      this.detail.status.create = false
+      this.detail.status.disabled = true
+      this.detail.status.hasCustom = row.custom
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
     },
     deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
@@ -265,10 +323,29 @@ export default {
         });
       });
     },
+    FormGoBack() {
+      this.drawer = false;
+    },
+    saveData(data) {
+      if (!this.useSubmit) {
+        return undefined;
+      } else {
+        data.tableName = this.thisTable.tableName
+        addMainTable(this.column.tableName, data).then(response => {
+          this.$message('新增成功！')
+          this.listLoading = false
+          this.drawer = false;
+          this.getColumnList(this.thisTable)
+        })
+        return true;
+      }
+    }
   }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.el-drawer.rtl {
+  overflow: scroll
+}
 </style>

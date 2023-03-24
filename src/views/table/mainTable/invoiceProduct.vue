@@ -121,7 +121,7 @@ export default {
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              show: isPermission("Invoice_Delete",this.$store.state.user),
+              hasPermission: isPermission("Invoice_Delete",this.$store.state.user),
               handleRow: this.deleteTable
             }
           ]

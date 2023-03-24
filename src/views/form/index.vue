@@ -18,10 +18,10 @@
     </div>
 
     <h5>主对象</h5>
-    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="100px" label-position="right">
+    <el-form v-loading="listLoading" ref="form" :inline="true" :model="form" label-width="200px" label-position="right">
       <el-form-item v-for="(column,index) in tableColumns" :key="index" :label="column.label"
                     v-if="isShow(column.inserted)"
-                    style="width: 49%; min-width: 300px">
+                    style="width: 49%; min-width: 300px;">
         <!--        下拉选择框-->
 
         <el-select v-if="column.formType==='Select' && !column.link" v-model="form[column.prop]" :label="column.label"

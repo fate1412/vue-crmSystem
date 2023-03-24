@@ -155,19 +155,19 @@ export default {
             {
               label: '重置密码', // 操作名称
               type: 'warning', //为element btn属性则是按钮
-              show: isPermission('SysUserRole_Edit',this.$store.state.user),
+              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
               handleRow: this.showResetPasswd
             },
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              show: isPermission('SysUserRole_Edit',this.$store.state.user),
+              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
               handleRow: this.setRole
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              show: isPermission('SysUser_Delete',this.$store.state.user),
+              hasPermission: isPermission('SysUser_Delete',this.$store.state.user),
               handleRow: this.deleteTable
             }
           ]

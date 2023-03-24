@@ -161,7 +161,7 @@
               <div v-for="(item) in dataSource.operation.data" :key="item.label">
                 <template v-if="item.type!=='icon'">
                   <el-button
-                    v-if="item.show"
+                    v-if="(item.show===undefined? true : item.show(scope.$index, scope.row, item.label)) && item.hasPermission"
                     v-bind="item"
                     :type="item.type?item.type:''"
                     size="mini"
