@@ -177,18 +177,14 @@ export default {
                 type: 'primary', //为element btn属性则是按钮
                 handleRow: this.columnEdit,
                 hasPermission: isPermission('Columns_Edit',this.$store.state.user),
-                show: function(index, row, label) {
-                  return (row.custom || (row.columnType===1 && !row.link)) && !row.disabled
-                }
+                show: this.columnEditShow
               },
               {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteTable,
                 hasPermission: isPermission('Columns_Edit',this.$store.state.user),
-                show: function(index, row, label) {
-                  return row.custom
-                }
+                show: this.columnDelShow
               }
             ]
           }
@@ -237,6 +233,8 @@ export default {
       this.showColumns = true
       const tableName = this.column.tableName
       this.thisTable = row
+      // this.column.dataSource.operation
+      console.log(222)
       const msg = this.columnMsg
       let data = {
         'like' : {
@@ -339,6 +337,12 @@ export default {
         })
         return true;
       }
+    },
+    columnEditShow(index, row, label) {
+      return (this.thisTable.custom || (row.columnType===1 && !row.link)) && !row.disabled
+    },
+    columnDelShow(index, row, label) {
+      return this.thisTable.custom
     }
   }
 }
