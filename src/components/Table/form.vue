@@ -3,7 +3,7 @@
 
     <div style="display: block; height: 50px">
       <div v-if="this.goBack!==undefined" style="margin-bottom: 20px; float: left">
-        <el-button @click="this.goBack()">返回</el-button>
+        <el-button @click="goBack()">返回</el-button>
       </div>
       <div style=" justify-content: right;margin-bottom: 20px; float: right">
         <div v-if="create || edit">
@@ -165,8 +165,8 @@ export default {
   watch: {
     'status': {
       handler(status) {
-        this.create = status.create === undefined? true : status.create
-        this.disabled = status.disabled === undefined? false : status.disabled
+        this.create = status.create === undefined ? true : status.create
+        this.disabled = status.disabled === undefined ? false : status.disabled
         this.isDelete = status.isDelete || false;
         this.isEdit = status.isEdit || false;
         this.form.child = {
@@ -181,8 +181,8 @@ export default {
   },
   created() {
     const status = this.status
-    this.create = status.create === undefined? true : status.create
-    this.disabled = status.disabled === undefined? false : status.disabled
+    this.create = status.create === undefined ? true : status.create
+    this.disabled = status.disabled === undefined ? false : status.disabled
     this.isDelete = status.isDelete || false;
     this.isEdit = status.isEdit || false;
     this.fetchData(this.tableName, this.id)
@@ -243,9 +243,7 @@ export default {
         data.childList = this.form.child.forms
       }
 
-      if (this.submit !== undefined) {
-        this.submit(data)
-      } else {
+      if (this.submit === undefined || !this.submit(data)) {
         if (this.create) {
           //新增
           addMainTable(this.tableName, data).then(response => {

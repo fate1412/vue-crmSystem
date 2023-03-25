@@ -177,14 +177,22 @@ export default {
                 type: 'primary', //为element btn属性则是按钮
                 handleRow: this.columnEdit,
                 hasPermission: isPermission('Columns_Edit',this.$store.state.user),
-                show: this.columnEditShow
+                show: function (index, row, label) {
+                  if (row.custom) {
+                    return true;
+                  } else {
+                    return (row.columnType===1 && !row.link) && !row.disabled
+                  }
+                }
               },
               {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteTable,
                 hasPermission: isPermission('Columns_Edit',this.$store.state.user),
-                show: this.columnDelShow
+                show: function (index, row, label) {
+                  return row.custom
+                }
               }
             ]
           }
@@ -233,8 +241,6 @@ export default {
       this.showColumns = true
       const tableName = this.column.tableName
       this.thisTable = row
-      // this.column.dataSource.operation
-      console.log(222)
       const msg = this.columnMsg
       let data = {
         'like' : {
@@ -318,16 +324,25 @@ export default {
             message: '删除成功！'
           });
           this.getList();
+          this.showColumns = false
+          this.thisTable = {}
         });
       });
     },
     FormGoBack() {
       this.drawer = false;
+      this.getTableList()
+      if (this.thisTable.tableName !== undefined && this.thisTable.tableName !== null) {
+        this.getColumnList(this.thisTable)
+      }
     },
     saveData(data) {
       if (!this.useSubmit) {
-        return undefined;
+        return false;
       } else {
+        if (data === undefined) {
+          return false
+        }
         data.tableName = this.thisTable.tableName
         addMainTable(this.column.tableName, data).then(response => {
           this.$message('新增成功！')
@@ -337,12 +352,6 @@ export default {
         })
         return true;
       }
-    },
-    columnEditShow(index, row, label) {
-      return (this.thisTable.custom || (row.columnType===1 && !row.link)) && !row.disabled
-    },
-    columnDelShow(index, row, label) {
-      return this.thisTable.custom
     }
   }
 }
