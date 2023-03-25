@@ -177,6 +177,14 @@ export default {
         this.fetchData(this.tableName, this.id)
       },
       deep: true
+    },
+    id(id) {
+      this.form.child = {
+        tableColumns: [],
+        dataList: [],
+        baseForm: {}
+      }
+      this.fetchData(this.tableName, id)
     }
   },
   created() {
