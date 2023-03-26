@@ -57,7 +57,15 @@
         <el-switch v-else-if="column.formType==='Switch'" v-model="form[column.prop]"
                    :disabled="(!create && column.disabled ) || disabled"/>
         <!--        Input-->
-        <el-input v-else-if="column.formType==='Input'" v-model="form[column.prop]"
+        <el-input v-else-if="column.formType==='String'" v-model="form[column.prop]"
+                  :disabled="(!create && column.disabled ) || disabled"/>
+        <el-input v-else-if="column.formType==='Number'" v-model="form[column.prop]"
+                  :disabled="(!create && column.disabled ) || disabled"/>
+        <el-input v-else-if="column.formType==='Integer'" v-model="form[column.prop]"
+                  :disabled="(!create && column.disabled ) || disabled"/>
+        <el-input v-else-if="column.formType==='Double'" v-model="form[column.prop]"
+                  :disabled="(!create && column.disabled ) || disabled"/>
+        <el-input v-else-if="column.formType==='Long'" v-model="form[column.prop]"
                   :disabled="(!create && column.disabled ) || disabled"/>
       </el-form-item>
 
@@ -185,7 +193,9 @@ export default {
               this.child = null
             } else {
               this.child.tableColumns = data.child.tableColumns
-              this.child.forms = data.child.tableDataList
+              if(data.child.tableDataList[0].id !== null) {
+                this.child.forms = data.child.tableDataList
+              }
               this.child.baseForm = data.child.tableDataList[0]
             }
             this.listLoading = false

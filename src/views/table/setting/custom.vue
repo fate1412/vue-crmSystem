@@ -188,7 +188,7 @@ export default {
               {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
-                handleRow: this.deleteTable,
+                handleRow: this.deleteColumn,
                 hasPermission: isPermission('Columns_Edit',this.$store.state.user),
                 show: function (index, row, label) {
                   return row.custom
@@ -316,9 +316,9 @@ export default {
     deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
         let data = {
-          'userId': row.userId
+          'id': row.id
         }
-        return deleteMainTable(this.tableName, data).then(response => {
+        return deleteMainTable(this.table.tableName, data).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'
@@ -326,6 +326,20 @@ export default {
           this.getList();
           this.showColumns = false
           this.thisTable = {}
+        });
+      });
+    },
+    deleteColumn(index, row, label) {
+      this.open('此操作将永久删除该, 是否继续?', () => {
+        let data = {
+          'id': row.id
+        }
+        return deleteMainTable(this.column.tableName, data).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+          this.getColumnList(this.thisTable);
         });
       });
     },

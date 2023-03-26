@@ -60,7 +60,15 @@
         <el-switch v-else-if="column.formType==='Switch'" v-model="form.main.data[column.prop]"
                    :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
         <!--        Input-->
-        <el-input v-else-if="column.formType==='Input'" v-model="form.main.data[column.prop]"
+        <el-input v-else-if="column.formType==='String'" v-model="form.main.data[column.prop]"
+                  :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
+        <el-input v-else-if="column.formType==='Number'" v-model="form.main.data[column.prop]"
+                  :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
+        <el-input v-else-if="column.formType==='Integer'" v-model="form.main.data[column.prop]"
+                  :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
+        <el-input v-else-if="column.formType==='Double'" v-model="form.main.data[column.prop]"
+                  :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
+        <el-input v-else-if="column.formType==='Long'" v-model="form.main.data[column.prop]"
                   :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
       </el-form-item>
 
@@ -220,7 +228,9 @@ export default {
             this.form.child = null
           } else {
             this.form.child.tableColumns = data.child.tableColumns
-            this.form.child.dataList = data.child.tableDataList
+            if(data.child.tableDataList[0].id !== null) {
+              this.form.child.dataList = data.child.tableDataList
+            }
             this.form.child.baseForm = data.child.tableDataList[0]
           }
           this.listLoading = false
@@ -248,7 +258,7 @@ export default {
       this.listLoading = true
       const data = this.form.main.data;
       if (this.form.child !== null) {
-        data.childList = this.form.child.forms
+        data.childList = this.form.child.dataList
       }
 
       if (this.submit === undefined || !this.submit(data)) {
