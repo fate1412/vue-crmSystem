@@ -173,7 +173,7 @@ export const constantRouterMap = [
       {
         path: '/flow',
         name: 'sysFlow',
-        component: () => import('@/views/table/flow'),
+        component: () => import('@/views/table/setting/flow'),
         meta: { title: '流程管理', icon: 'table' }
       }
     ]
