@@ -27,6 +27,7 @@
         :goBack="FormGoBack"
         :submit="saveData"
       />
+
     </el-drawer>
   </div>
 </template>
@@ -68,7 +69,7 @@ export default {
             name: '新增',
             key: 1,
             handleClick: this.createTable,
-            show: isPermission("TableDict_Insert",this.$store.state.user),
+            show: isPermission("TableDict_Insert", this.$store.state.user),
             bgColor: ''//自定义按钮背景色
           }],
           data: [], // 表格数据
@@ -105,8 +106,8 @@ export default {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteTable,
-                hasPermission: isPermission('TableDict_Delete',this.$store.state.user),
-                show: function(index, row, label) {
+                hasPermission: isPermission('TableDict_Delete', this.$store.state.user),
+                show: function (index, row, label) {
                   return row.custom
                 }
               }
@@ -134,7 +135,7 @@ export default {
             name: '新增',
             key: 1,
             handleClick: this.createColumn,
-            show: isPermission("Columns_Edit",this.$store.state.user),
+            show: isPermission("Columns_Edit", this.$store.state.user),
             bgColor: ''//自定义按钮背景色
           }],
           data: [], // 表格数据
@@ -176,12 +177,12 @@ export default {
                 label: '编辑', // 操作名称
                 type: 'primary', //为element btn属性则是按钮
                 handleRow: this.columnEdit,
-                hasPermission: isPermission('Columns_Edit',this.$store.state.user),
+                hasPermission: isPermission('Columns_Edit', this.$store.state.user),
                 show: function (index, row, label) {
                   if (row.custom) {
                     return true;
                   } else {
-                    return (row.columnType===1 && !row.link) && !row.disabled
+                    return (row.columnType === 1 && !row.link) && !row.disabled
                   }
                 }
               },
@@ -189,7 +190,7 @@ export default {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteColumn,
-                hasPermission: isPermission('Columns_Edit',this.$store.state.user),
+                hasPermission: isPermission('Columns_Edit', this.$store.state.user),
                 show: function (index, row, label) {
                   return row.custom
                 }
@@ -227,7 +228,7 @@ export default {
       const tableName = this.table.tableName
       const msg = this.tableMsg
       let data = {
-        'like' : {
+        'like': {
           'showName': msg.showName
         }
       }
@@ -243,7 +244,7 @@ export default {
       this.thisTable = row
       const msg = this.columnMsg
       let data = {
-        'like' : {
+        'like': {
           'tableName': row.tableName,
           'showName': msg.showName
         }
@@ -284,8 +285,8 @@ export default {
       this.detail.title = '新建表'
       this.detail.status.create = true
       this.detail.status.disabled = false
-      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
-      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
       this.drawer = true;
     },
     createColumn() {
@@ -296,8 +297,8 @@ export default {
       this.detail.title = '新建字段'
       this.detail.status.create = true
       this.detail.status.disabled = false
-      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
-      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
       this.drawer = true;
     },
     columnEdit(index, row, label) {
@@ -310,8 +311,8 @@ export default {
       this.detail.status.create = false
       this.detail.status.disabled = true
       this.detail.status.hasCustom = row.custom
-      this.detail.status.isDelete = isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user)
-      this.detail.status.isEdit = isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+      this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
     },
     deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
@@ -372,7 +373,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.el-drawer.rtl {
-  overflow: scroll
-}
+
 </style>

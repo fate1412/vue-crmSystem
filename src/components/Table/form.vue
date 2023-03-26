@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="height: 700px; overflow: auto">
 
     <div style="display: block; height: 50px">
       <div v-if="this.goBack!==undefined" style="margin-bottom: 20px; float: left">
