@@ -54,14 +54,14 @@ export default {
     this.doSelectList('', 1, this.tableName).then((data) => {
       this.selectList = [...data]
       this.currentPage++;
+      let flag = this.selectList.find(s => s.id === this.value)
+      if (!flag) {
+        this.selectList.push({
+          'id': this.value,
+          'name': this.initialName
+        })
+      }
     })
-    let flag = this.selectList.find(s => s.id === this.value)
-    if (!flag) {
-      this.selectList.push({
-        'id': this.value,
-        'name': this.initialName
-      })
-    }
   },
   props: {
     value: {

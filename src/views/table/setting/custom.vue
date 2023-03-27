@@ -324,7 +324,7 @@ export default {
             type: 'success',
             message: '删除成功！'
           });
-          this.getList();
+          this.getTableList();
           this.showColumns = false
           this.thisTable = {}
         });
