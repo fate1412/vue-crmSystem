@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import { getTables } from '@/api/table'
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
@@ -8,6 +8,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '../views/layout/Layout'
+import ta from "element-ui/src/locale/lang/ta";
 
 /**
  * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -21,7 +22,7 @@ import Layout from '../views/layout/Layout'
     icon: 'svg-name'             the icon show in the sidebar,
   }
  **/
-export const constantRouterMap = [
+export let constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
   {
@@ -127,22 +128,9 @@ export const constantRouterMap = [
       {
         path: 'customTable',
         name: 'customTable',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/table/custom'),
         meta: { title: '定制表' },
-        children: [
-          {
-            path: 'custom1',
-            name: 'custom1',
-            component: () => import('@/views/table/index?table=custom1'),
-            meta: { title: '定制表1', icon: 'table' }
-          },
-          {
-            path: 'custom2',
-            name: 'custom2',
-            component: () => import('@/views/table/index?table=custom2'),
-            meta: { title: '定制表2', icon: 'table' }
-          }
-        ]
+        children: []
       }
     ]
   },
@@ -182,9 +170,55 @@ export const constantRouterMap = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export default new Router({
+
+const router = new Router({
   // mode: 'history', //后端支持可开
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: getRoutes()
 })
+
+export function resetRoutes() {
+  getTables().then(res => {
+    const dataList = res.data
+    let routes = []
+    for (let i = 0; i < dataList.length; i++) {
+      let data = dataList[i]
+      const route = {
+        path: data.tableName,
+        name: data.tableName,
+        component: () => import('@/views/table/custom'),
+        meta: { title: data.showName, icon: 'table' }
+      }
+      // CRM下的定制下
+      routes.push(route)
+    }
+    constantRouterMap[5].children[1].children=routes
+    router.addRoutes([constantRouterMap[5]])
+  })
+}
+
+export function getRoutes() {
+  let routerMap = constantRouterMap
+  getTables().then(res => {
+    const dataList = res.data
+    let routes = []
+    for (let i = 0; i < dataList.length; i++) {
+      let data = dataList[i]
+      const route = {
+        path: data.tableName,
+        name: data.tableName,
+        component: () => import('@/views/table/custom'),
+        meta: { title: data.showName, icon: 'table' }
+      }
+      // CRM下的定制下
+      routes.push(route)
+    }
+    routerMap[5].children[1].children=routes
+    router.addRoutes([routerMap[5]])
+  })
+  return constantRouterMap
+}
+
+
+export default router
 

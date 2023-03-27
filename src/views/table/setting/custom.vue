@@ -40,6 +40,7 @@ import myForm from '@/components/Table/form'
 
 import { getMainListByPage, deleteMainTable, addMainTable } from '@/api/table'
 import { isPermission, toUpperCase } from '@/utils/validate'
+import { resetRoutes } from '@/router/index'
 
 
 export default {
@@ -286,7 +287,7 @@ export default {
       this.detail.status.create = true
       this.detail.status.disabled = false
       this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
-      this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
+      this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Insert'), this.$store.state.user)
       this.drawer = true;
     },
     createColumn() {
@@ -327,6 +328,7 @@ export default {
           this.getTableList();
           this.showColumns = false
           this.thisTable = {}
+          resetRoutes()
         });
       });
     },
@@ -350,6 +352,7 @@ export default {
       if (this.thisTable.tableName !== undefined && this.thisTable.tableName !== null) {
         this.getColumnList(this.thisTable)
       }
+      resetRoutes()
     },
     saveData(data) {
       if (!this.useSubmit) {

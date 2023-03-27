@@ -12,29 +12,30 @@
 <script>
 import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
-// import { dynamicShareList } from '@/api/user'
-// import { timeFormat } from '@/filters/index'
-import { getMainListByPage } from '@/api/table'
+import { isPermission, toUpperCase } from '@/utils/validate'
+
+import { getMainListByPage, deleteMainTable } from '@/api/table'
 
 export default {
-  name: 'customer',
+  name: 'salesOrder',
   components: { filterPane, tablePane },
   data() {
     return {
+      tableName: 'salesOrder',
       dialogVisible: true,
       // 搜索栏配置
       filterData: {
         timeSelect: false,
         elinput: [
           {
-            name: '客户ID',
+            name: '销售订单Id',
             width: 230,
             key: 'id'
           },
           {
-            name: '客户名称',
+            name: '客户Id',
             width: 230,
-            key: 'name'
+            key: 'customerId'
           }
         ]
       },
@@ -44,36 +45,43 @@ export default {
         tool: [{
           name: '新增',
           key: 1,
-          permission: 2010701,
           handleClick: this.createTable,
+          show: isPermission("SalesOrder_Insert",this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
-        cols: [{
-          label: '客户ID',
-          // width: 100,
-          prop: 'id',
-          link: true,
-          click: this.showDialog,
-        },
+        cols: [
           {
-            label: '客户名称',
+            label: '销售订单Id',
             // width: 100,
-            prop: 'name'
+            prop: 'id',
+            link: true
           },
           {
-            label: '客户类型',
+            label: '原价/元',
             // width: 100,
-            prop: 'customerTypeR'
+            prop: 'originalPrice'
           },
           {
-            label: '手机号',
-            prop: 'mobile',
+            label: '折后价格/元',
+            // width: 100,
+            prop: 'discountPrice'
+          },
+          {
+            label: '是否通过',
+            prop: 'isPass',
             // width: 230
           },
           {
-            label: '创建时间',
-            prop: 'createTime',
+            label: '客户id',
+            prop: 'customerIdR',
+            link: true,
+            click: this.getDetails
+            // width: 230
+          },
+          {
+            label: '发货状态',
+            prop: 'invoiceStatusR',
             // width: 230
           },
           {
@@ -88,22 +96,21 @@ export default {
             click: this.getDetails
           },
           {
-            label: '更新者',
-            prop: 'updateMemberR',
+            label: '修改人',
+            prop: 'updaterR',
             link: true,
             click: this.getDetails
           },
           {
-            label: '负责人',
-            prop: 'ownerR',
-            link: true,
-            click: this.getDetails
+            label: '是否通过',
+            prop: 'pass',
+            pass: true
           }
         ], // 表格的列数据
         handleSelectionChange: () => {
         },
         border: true,
-        isSelection: true, // 表格有多选时设置
+        isSelection: false, // 表格有多选时设置
         isOperation: true, // 表格有操作列时设置
         isIndex: false, // 列表序号
         loading: true, // loading
@@ -118,61 +125,41 @@ export default {
           width: '100', // 根据实际情况给宽度
           data: [ // 功能数组
             {
-              type: 'icon', //为icon则是图标
-              label: '推荐', // 功能
-              icon: 'iconfont recommend-btn icon-iconkuozhan_tuijianpre',
-              permission: '3010105', // 后期这个操作的权限，用来控制权限
-              handleRow: this.handleRow
-            },
-            {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              permission: '2010702', // 后期这个操作的权限，用来控制权限
-              handleRow: this.handleRow
+              hasPermission: isPermission("SalesOrder_Delete",this.$store.state.user),
+              handleRow: this.deleteTable
             }
           ]
         }
       },
-      dialogAdd: true,
       msg: {}
-    }
-  },
-  watch: {
-    $route: {
-      handler: 'resetData'
     }
   },
   created() {
     console.log("table")
-    console.log(1111)
     this.getList()
   },
   methods: {
     getList() {
-      console.log(1111)
       this.dataSource.loading = true
       const pageData = this.dataSource.pageData
-      const tableName = this.$route.name
       const msg = this.msg
       let data = {
         'page':  pageData.pageNum,
-        'pageSize': pageData.pageSize
+        'pageSize': pageData.pageSize,
         'like' : {
-          'id': 1,
-          'name': msg.name
+          'id': msg.id,
+          'customerId': msg.customerId,
         }
       }
-      console.log(1111)
-      console.log(data)
-      getMainListByPage(tableName, data).then(res => {
+      getMainListByPage(this.tableName, data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
           } else {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.data = []
             this.dataSource.pageData.total = 0
           }
@@ -191,22 +178,45 @@ export default {
       this.dataSource.pageData.pageNum = pageNum
       this.getList()
     },
-    resetData() {
-      //在这里获取并处理该路由下所需要的数据。
-      this.getList();
-    },
     createTable() {
       this.$router.push({
         name: 'Form',
         params: {
-          goBackName: this.$route.name,
-          tableName: this.$route.name,
-          disabled: false
+          goBackName: this.tableName,
+          tableName: this.tableName,
+          disabled: false,
+          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
         }
       })
     },
-    deleteTable() {
-
+    open(message, operation) {
+      this.$confirm(message, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        operation();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+    },
+    deleteTable(index,row,label) {
+      this.open('此操作将永久删除该, 是否继续?', () => {
+        let data = {
+          'id': row.id
+        }
+        return deleteMainTable(this.tableName, data).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+          this.getList();
+        });
+      });
     }
   }
 }
