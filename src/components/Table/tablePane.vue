@@ -108,7 +108,7 @@
           <template slot-scope="scope">
             <el-link v-if="item.fixed || item.link"
                      :underline="false"
-                     :disabled="item.disabled"
+                     :disabled="item.noClick"
                      style="color: deepskyblue"
                      @click="getDetails(
                        scope.row[item.prop].id === undefined? scope.row[item.prop] : scope.row[item.prop].id,
@@ -245,7 +245,11 @@ export default {
     dataSource: {
       type: Object
     },
-    rowClick: Function
+    rowClick: Function,
+    isCustom: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -290,7 +294,7 @@ export default {
     },
     getDetails(id, tableName) {
       tableName = tableName === undefined ? this.$route.name : tableName
-      this.$router.push({
+      let nextRoute = {
         name: 'Form',
         params: {
           goBackName: this.$route.name,
@@ -300,7 +304,13 @@ export default {
           isDelete: isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user),
           isEdit: isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
         }
-      })
+      }
+      if (this.isCustom) {
+        nextRoute.params.isCustom = true
+        nextRoute.params.isDelete = isPermission('Custom_Delete',this.$store.state.user)
+        nextRoute.params.isEdit = isPermission('Custom_Edit',this.$store.state.user)
+      }
+      this.$router.push(nextRoute)
     },
   }
 }

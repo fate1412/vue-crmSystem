@@ -58,13 +58,6 @@ export function deleteMainTable(tableName,data) {
   })
 }
 
-export function getTables() {
-  return request({
-    url: '/custom/tables',
-    method: 'get'
-  })
-}
-
 export function getOptions(params) {
   return request({
     url: '/'+ params.tableName + '/getOptions',

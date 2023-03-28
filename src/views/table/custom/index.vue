@@ -5,6 +5,7 @@
       :data-source="dataSource"
       @changeSize="changeSize"
       @changeNum="changeNum"
+      :isCustom="true"
     />
   </div>
 </template>
@@ -14,14 +15,15 @@ import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
-import { getMainListByPage, deleteMainTable } from '@/api/table'
+// import { getMainListByPage, deleteMainTable } from '@/api/table'
+import { getCustomListByPage, deleteMainTable } from '@/api/customTable'
 
 export default {
-  name: 'salesOrder',
+  name: 'customTable',
   components: { filterPane, tablePane },
   data() {
     return {
-      tableName: 'salesOrder',
+      tableName: '',
       dialogVisible: true,
       // 搜索栏配置
       filterData: {
@@ -46,67 +48,11 @@ export default {
           name: '新增',
           key: 1,
           handleClick: this.createTable,
-          show: isPermission("SalesOrder_Insert",this.$store.state.user),
+          show: isPermission("Custom_Insert",this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
-        cols: [
-          {
-            label: '销售订单Id',
-            // width: 100,
-            prop: 'id',
-            link: true
-          },
-          {
-            label: '原价/元',
-            // width: 100,
-            prop: 'originalPrice'
-          },
-          {
-            label: '折后价格/元',
-            // width: 100,
-            prop: 'discountPrice'
-          },
-          {
-            label: '是否通过',
-            prop: 'isPass',
-            // width: 230
-          },
-          {
-            label: '客户id',
-            prop: 'customerIdR',
-            link: true,
-            click: this.getDetails
-            // width: 230
-          },
-          {
-            label: '发货状态',
-            prop: 'invoiceStatusR',
-            // width: 230
-          },
-          {
-            label: '更新时间',
-            prop: 'updateTime',
-            // width: 230
-          },
-          {
-            label: '创建人',
-            prop: 'createrR',
-            link: true,
-            click: this.getDetails
-          },
-          {
-            label: '修改人',
-            prop: 'updaterR',
-            link: true,
-            click: this.getDetails
-          },
-          {
-            label: '是否通过',
-            prop: 'pass',
-            pass: true
-          }
-        ], // 表格的列数据
+        cols: [], // 表格的列数据
         handleSelectionChange: () => {
         },
         border: true,
@@ -127,7 +73,7 @@ export default {
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              hasPermission: isPermission("SalesOrder_Delete",this.$store.state.user),
+              hasPermission: isPermission("Custom_Delete",this.$store.state.user),
               handleRow: this.deleteTable
             }
           ]
@@ -136,8 +82,17 @@ export default {
       msg: {}
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        this.tableName = this.$route.name
+        this.getList()
+      },
+      deep: true
+    }
+  },
   created() {
-    console.log("table")
+    this.tableName = this.$route.name
     this.getList()
   },
   methods: {
@@ -151,11 +106,13 @@ export default {
         'like' : {
           'id': msg.id,
           'customerId': msg.customerId,
-        }
+        },
+        'tableName': this.tableName
       }
-      getMainListByPage(this.tableName, data).then(res => {
+      getCustomListByPage(data).then(res => {
         this.dataSource.loading = false
         if (res.success) {
+          this.dataSource.cols = res.data.tableColumns
           if (res.data.total > 0) {
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
@@ -185,8 +142,10 @@ export default {
           goBackName: this.tableName,
           tableName: this.tableName,
           disabled: false,
-          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
+          isDelete: isPermission('Custom_Delete',this.$store.state.user),
+          isEdit: isPermission('Custom_Edit',this.$store.state.user),
+          isInsert: isPermission('Custom_Edit',this.$store.state.user),
+          isCustom: true
         }
       })
     },

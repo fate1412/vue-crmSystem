@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { getTables } from '@/api/table'
+import { getTables } from '@/api/customTable'
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
@@ -127,7 +127,7 @@ export let constantRouterMap = [
       },
       {
         path: 'customTable',
-        name: 'customTable',
+        name: 'CustomTable',
         component: () => import('@/views/table/custom'),
         meta: { title: '定制表' },
         children: []

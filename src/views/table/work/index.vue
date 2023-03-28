@@ -56,7 +56,7 @@ export default {
             // width: 100,
             prop: 'tableNameR',
             link: true,
-            disabled: true
+            noClick: true
           },
           {
             label: '流程数据',

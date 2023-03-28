@@ -100,7 +100,7 @@ export default {
             // width: 100,
             prop: 'relevanceTableR',
             link: true,
-            disabled: true
+            noClick: true
           },
           {
             label: '创建时间',

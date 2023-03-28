@@ -125,6 +125,7 @@
 import myElSelect from '@/components/Table/my-el-select'
 
 import { getOptions, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
+import { getCustomTableById, getCustomColumns } from '@/api/customTable'
 
 export default {
   components: {
@@ -147,7 +148,10 @@ export default {
       create: true,
       //权限
       isDelete: false,
-      isEdit: false
+      isEdit: false,
+      isInsert: false,
+      //是否定制
+      isCustom: false
     }
   },
   created() {
@@ -160,6 +164,7 @@ export default {
     this.disabled = params.disabled === undefined ? true : params.disabled;
     this.isDelete = params.isDelete || false;
     this.isEdit = params.isEdit || false;
+    this.isCustom = params.isCustom === undefined ? false : params.isCustom;
     this.fetchData(this.tableName, this.id)
 
   },
@@ -170,39 +175,79 @@ export default {
           name: 'customer'
         })
       } else {
-        this.listLoading = true
-        if (this.create) {
-          getColumns(tableName).then(response => {
-            const data = response.data;
-            this.form = data.tableDataList[0];
-            this.tableColumns = data.tableColumns;
-            if (data.child === undefined || data.child === null) {
-              this.child = null
-            } else {
-              this.child.tableColumns = data.child.tableColumns
-              this.child.baseForm = data.child.tableDataList[0]
-            }
-            this.listLoading = false
-          })
+        if (!this.isCustom) {
+          this.getMainTable(tableName, id)
         } else {
-          getMainTableById(tableName, id).then(response => {
-            const data = response.data;
-            this.form = data.tableDataList[0];
-            this.tableColumns = data.tableColumns;
-            if (data.child === undefined || data.child === null) {
-              this.child = null
-            } else {
-              this.child.tableColumns = data.child.tableColumns
-              if(data.child.tableDataList[0].id !== null) {
-                this.child.forms = data.child.tableDataList
-              }
-              this.child.baseForm = data.child.tableDataList[0]
-            }
-            this.listLoading = false
-          })
+          this.getCustomTable(tableName, id)
         }
       }
 
+    },
+    getMainTable(tableName, id) {
+      this.listLoading = true
+      if (this.create) {
+        getColumns(tableName).then(response => {
+          const data = response.data;
+          this.form = data.tableDataList[0];
+          this.tableColumns = data.tableColumns;
+          if (data.child === undefined || data.child === null) {
+            this.child = null
+          } else {
+            this.child.tableColumns = data.child.tableColumns
+            this.child.baseForm = data.child.tableDataList[0]
+          }
+          this.listLoading = false
+        })
+      } else {
+        getMainTableById(tableName, id).then(response => {
+          const data = response.data;
+          this.form = data.tableDataList[0];
+          this.tableColumns = data.tableColumns;
+          if (data.child === undefined || data.child === null) {
+            this.child = null
+          } else {
+            this.child.tableColumns = data.child.tableColumns
+            if(data.child.tableDataList[0].id !== null) {
+              this.child.forms = data.child.tableDataList
+            }
+            this.child.baseForm = data.child.tableDataList[0]
+          }
+          this.listLoading = false
+        })
+      }
+    },
+    getCustomTable(tableName,id) {
+      this.listLoading = true
+      if (this.create) {
+        getCustomColumns(tableName).then(response => {
+          const data = response.data;
+          this.form = data.tableDataList[0];
+          this.tableColumns = data.tableColumns;
+          if (data.child === undefined || data.child === null) {
+            this.child = null
+          } else {
+            this.child.tableColumns = data.child.tableColumns
+            this.child.baseForm = data.child.tableDataList[0]
+          }
+          this.listLoading = false
+        })
+      } else {
+        getCustomTableById(tableName, id).then(response => {
+          const data = response.data;
+          this.form = data.tableDataList[0];
+          this.tableColumns = data.tableColumns;
+          if (data.child === undefined || data.child === null) {
+            this.child = null
+          } else {
+            this.child.tableColumns = data.child.tableColumns
+            if(data.child.tableDataList[0].id !== null) {
+              this.child.forms = data.child.tableDataList
+            }
+            this.child.baseForm = data.child.tableDataList[0]
+          }
+          this.listLoading = false
+        })
+      }
     },
     goBack() {
       this.$router.push({
@@ -210,6 +255,11 @@ export default {
       })
     },
     saveTable() {
+      if (!this.isCustom) {
+        this.saveMainTable()
+      }
+    },
+    saveMainTable() {
       this.listLoading = true
       const data = this.form;
       if (this.child !== null) {
@@ -238,7 +288,6 @@ export default {
         this.listLoading = false
       }
       this.listLoading = false
-
     },
     cancelTable() {
       if (this.create) {
