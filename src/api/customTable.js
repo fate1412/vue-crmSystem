@@ -1,5 +1,21 @@
 import request from '@/utils/request'
 
+
+export function isCustomTable(tableName) {
+  const mainTables = [
+    "customer",
+    "invoice",
+    "invoiceProduct",
+    "orderProduct",
+    "product",
+    "salesOrder",
+    "stockList",
+    "stockListProduct",
+    "sysUser"
+  ]
+  return !mainTables.find(table => table === tableName)
+}
+
 export function getTables() {
   return request({
     url: '/custom/tables',

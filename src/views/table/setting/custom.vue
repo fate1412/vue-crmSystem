@@ -8,7 +8,7 @@
       />
     </div>
 
-    <div v-if="showColumns" style="width: 50%">
+    <div v-if="showColumns" style="width: 50%;">
       <filter-pane :filter-data="column.filterData" @filterMsg="columnFilterMsg"/>
       <table-pane
         :data-source="column.dataSource"

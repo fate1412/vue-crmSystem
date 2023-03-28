@@ -20,6 +20,7 @@
       style="width: 100%;"
       :class="{ 'no-data': !dataSource.data || !dataSource.data.length }"
       :data="dataSource.data"
+      :height="550"
       @row-click="getRowData"
       @selection-change="dataSource.handleSelectionChange"
     >
@@ -179,6 +180,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <div class="page">
       <el-pagination
         v-if="dataSource.pageData.total>0"
@@ -197,8 +199,8 @@
 </template>
 
 <script>
-
 import { toUpperCase , isPermission } from '@/utils/validate'
+import { isCustomTable } from '@/api/customTable'
 //  dataSource: {
 //          tool:[
 //            {
@@ -294,6 +296,7 @@ export default {
     },
     getDetails(id, tableName) {
       tableName = tableName === undefined ? this.$route.name : tableName
+      const isCustom = isCustomTable(tableName) || false
       let nextRoute = {
         name: 'Form',
         params: {
@@ -305,7 +308,7 @@ export default {
           isEdit: isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
         }
       }
-      if (this.isCustom) {
+      if (isCustom) {
         nextRoute.params.isCustom = true
         nextRoute.params.isDelete = isPermission('Custom_Delete',this.$store.state.user)
         nextRoute.params.isEdit = isPermission('Custom_Edit',this.$store.state.user)

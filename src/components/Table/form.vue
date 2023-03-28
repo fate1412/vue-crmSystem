@@ -61,7 +61,7 @@
           </div>
         </div>
         <!--        Switch开关-->
-        <el-switch v-else-if="column.formType==='Switch'" v-model="form.main.data[column.prop]"
+        <el-switch v-else-if="column.formType==='Boolean'" v-model="form.main.data[column.prop]"
                    :disabled="((!hasCustom || (!create && column.disabled )) || disabled)"/>
         <!--        Input-->
         <el-input v-else-if="column.formType==='String'" v-model="form.main.data[column.prop]"

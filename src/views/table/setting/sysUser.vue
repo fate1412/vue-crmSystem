@@ -140,7 +140,7 @@ export default {
         border: true,
         isSelection: false, // 表格有多选时设置
         isOperation: true, // 表格有操作列时设置
-        isIndex: false, // 列表序号
+        isIndex: true, // 列表序号
         loading: true, // loading
         pageData: {
           total: 0, // 总条数
