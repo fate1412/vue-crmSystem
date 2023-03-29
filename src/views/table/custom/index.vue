@@ -5,7 +5,6 @@
       :data-source="dataSource"
       @changeSize="changeSize"
       @changeNum="changeNum"
-      :isCustom="true"
     />
   </div>
 </template>

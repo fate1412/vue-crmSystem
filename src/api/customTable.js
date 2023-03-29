@@ -52,6 +52,22 @@ export function getCustomTableById(tableName,id) {
   })
 }
 
+export function addCustomTable(data) {
+  return request({
+    url: "/custom/add",
+    method: 'put',
+    data: data
+  })
+}
+
+export function updateCustomTable(data) {
+  return request({
+    url: "/custom/update",
+    method: 'post',
+    data: data
+  })
+}
+
 export function deleteMainTable(tableName,data) {
   return request({
     url: '/'+ tableName + '/delete',

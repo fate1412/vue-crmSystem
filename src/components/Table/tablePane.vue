@@ -247,11 +247,7 @@ export default {
     dataSource: {
       type: Object
     },
-    rowClick: Function,
-    isCustom: {
-      type: Boolean,
-      default: false
-    }
+    rowClick: Function
   },
   data() {
     return {

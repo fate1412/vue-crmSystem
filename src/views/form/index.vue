@@ -125,7 +125,7 @@
 import myElSelect from '@/components/Table/my-el-select'
 
 import { getOptions, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
-import { getCustomTableById, getCustomColumns } from '@/api/customTable'
+import { getCustomTableById, getCustomColumns, addCustomTable, updateCustomTable } from '@/api/customTable'
 
 export default {
   components: {
@@ -257,6 +257,8 @@ export default {
     saveTable() {
       if (!this.isCustom) {
         this.saveMainTable()
+      } else {
+        this.saveCustomTable()
       }
     },
     saveMainTable() {
@@ -275,6 +277,37 @@ export default {
       } else if (this.edit) {
         //编辑
         updateMainTable(this.tableName, data).then(response => {
+          this.$message('修改成功')
+          this.edit = !this.edit
+          this.disabled = !this.disabled
+
+          this.fetchData(this.tableName, this.id);
+          this.listLoading = false
+        })
+      } else {
+        this.edit = !this.edit
+        this.disabled = !this.disabled
+        this.listLoading = false
+      }
+      this.listLoading = false
+    },
+    saveCustomTable() {
+      this.listLoading = true
+      const data = this.form;
+      if (this.child !== null) {
+        data.childList = this.child.forms
+      }
+      data.tableName = this.tableName;
+      if (this.create) {
+        //新增
+        addCustomTable(data).then(response => {
+          this.$message('新增成功！')
+          this.listLoading = false
+          this.goBack();
+        })
+      } else if (this.edit) {
+        //编辑
+        updateCustomTable(data).then(response => {
           this.$message('修改成功')
           this.edit = !this.edit
           this.disabled = !this.disabled
