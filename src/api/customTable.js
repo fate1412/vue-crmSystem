@@ -11,7 +11,9 @@ export function isCustomTable(tableName) {
     "salesOrder",
     "stockList",
     "stockListProduct",
-    "sysUser"
+    "sysUser",
+    "sysRole",
+    "sysFlow"
   ]
   return !mainTables.find(table => table === tableName)
 }

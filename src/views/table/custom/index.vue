@@ -29,14 +29,14 @@ export default {
         timeSelect: false,
         elinput: [
           {
-            name: '销售订单Id',
+            name: 'Id',
             width: 230,
             key: 'id'
           },
           {
-            name: '客户Id',
+            name: 'name',
             width: 230,
-            key: 'customerId'
+            key: 'name'
           }
         ]
       },
@@ -104,7 +104,7 @@ export default {
         'pageSize': pageData.pageSize,
         'like' : {
           'id': msg.id,
-          'customerId': msg.customerId,
+          'name': msg.name,
         },
         'tableName': this.tableName
       }
