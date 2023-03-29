@@ -102,7 +102,7 @@ export default {
   methods: {
     getSelectList: debounce(function (query) {
       this.doGetList(query)
-    }, 2000, { leading: true, trailing: false }),
+    }, 1000, { leading: true, trailing: false }),
     doGetList(query) {
       //修改搜索条件则分页数变为1
       if (this.previousQuery !== query) {

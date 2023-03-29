@@ -125,7 +125,7 @@
 import myElSelect from '@/components/Table/my-el-select'
 
 import { getOptions, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
-import { getCustomTableById, getCustomColumns, addCustomTable, updateCustomTable, deleteCustomTable } from '@/api/customTable'
+import { getCustomTableById, getCustomColumns, addCustomTable, updateCustomTable, deleteCustomTable, getCustomOptions, isCustomTable } from '@/api/customTable'
 
 export default {
   components: {
@@ -380,9 +380,16 @@ export default {
         "page": page,
         "tableName": tableName
       }
-      return getOptions(params).then(res => {
-        return Promise.resolve(res.data)
-      })
+      const isCustom = isCustomTable(tableName)
+      if (!isCustom) {
+        return getOptions(params).then(res => {
+          return Promise.resolve(res.data)
+        })
+      } else {
+        return getCustomOptions(params).then(res => {
+          return Promise.resolve(res.data)
+        })
+      }
     },
     isShow(inserted) {
       if (this.create) {

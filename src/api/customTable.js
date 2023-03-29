@@ -80,3 +80,11 @@ export function deleteCustomTable(tableName,id) {
     }
   })
 }
+
+export function getCustomOptions(params) {
+  return request({
+    url: '/custom/getOptions',
+    method: 'get',
+    params
+  })
+}
