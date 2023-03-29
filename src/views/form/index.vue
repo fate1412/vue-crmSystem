@@ -125,7 +125,7 @@
 import myElSelect from '@/components/Table/my-el-select'
 
 import { getOptions, getMainTableById, updateMainTable, addMainTable, deleteMainTable, getColumns } from '@/api/table'
-import { getCustomTableById, getCustomColumns, addCustomTable, updateCustomTable } from '@/api/customTable'
+import { getCustomTableById, getCustomColumns, addCustomTable, updateCustomTable, deleteCustomTable } from '@/api/customTable'
 
 export default {
   components: {
@@ -340,13 +340,23 @@ export default {
           let data = {
             'id': this.form.id
           }
-          return deleteMainTable(this.tableName, data).then(response => {
-            this.$message({
-              type: 'success',
-              message: '删除成功！'
+          if (!this.isCustom) {
+            return deleteMainTable(this.tableName, data).then(response => {
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
+              this.goBack();
             });
-            this.goBack();
-          });
+          } else {
+            return deleteCustomTable(this.tableName, this.form.id).then(response => {
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
+              this.goBack();
+            });
+          }
         });
       }
     },

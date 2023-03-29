@@ -70,10 +70,13 @@ export function updateCustomTable(data) {
   })
 }
 
-export function deleteMainTable(tableName,data) {
+export function deleteCustomTable(tableName,id) {
   return request({
-    url: '/'+ tableName + '/delete',
+    url: '/custom/delete',
     method: 'delete',
-    data: data
+    data: {
+      tableName: tableName,
+      id: id
+    }
   })
 }

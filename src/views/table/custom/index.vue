@@ -15,7 +15,7 @@ import tablePane from '@/components/Table/tablePane'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
 // import { getMainListByPage, deleteMainTable } from '@/api/table'
-import { getCustomListByPage, deleteMainTable } from '@/api/customTable'
+import { getCustomListByPage, deleteCustomTable } from '@/api/customTable'
 
 export default {
   name: 'customTable',
@@ -164,10 +164,7 @@ export default {
     },
     deleteTable(index,row,label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
-        let data = {
-          'id': row.id
-        }
-        return deleteMainTable(this.tableName, data).then(response => {
+        return deleteCustomTable(this.tableName, row.id).then(response => {
           this.$message({
             type: 'success',
             message: '删除成功！'
