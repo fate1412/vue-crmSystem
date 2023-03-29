@@ -142,6 +142,11 @@ export default {
           data: [], // 表格数据
           cols: [
             {
+              label: '字段顺序',
+              // width: 100,
+              prop: 'columnIndex'
+            },
+            {
               label: '字段名',
               // width: 100,
               prop: 'showName'
