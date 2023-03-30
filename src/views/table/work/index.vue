@@ -66,6 +66,13 @@ export default {
           {
             label: '审批状态',
             prop: 'passR',
+            setColor: function (pass) {
+              if (pass === '已拒绝') {
+                return 'red'
+              } else if (pass === '已同意') {
+                return 'lightgreen'
+              }
+            }
             // width: 230
           },
           {

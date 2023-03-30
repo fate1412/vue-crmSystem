@@ -136,7 +136,9 @@
               <div v-else-if="scope.row[item.prop] === false" style="color: red">
                 {{ '否' }}
               </div>
-              <div v-else>{{ scope.row[item.prop]}}</div>
+              <div v-else :style="{color: (item.setColor === undefined? '' :item.setColor(scope.row[item.prop])) }">
+                {{ scope.row[item.prop]}}
+              </div>
             </div>
           </template>
         </el-table-column>
