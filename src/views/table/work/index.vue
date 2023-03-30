@@ -181,7 +181,7 @@ export default {
       let msg = pass === 1 ? '已同意' : '已拒绝'
       approve(data).then(res => {
         this.$message({
-          type: 'info',
+          type: 'success',
           message: msg
         });
         this.getList()

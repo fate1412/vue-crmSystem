@@ -13,7 +13,8 @@ export function isCustomTable(tableName) {
     "stockListProduct",
     "sysUser",
     "sysRole",
-    "sysFlow"
+    "sysFlow",
+    "tableDict"
   ]
   return !mainTables.find(table => table === tableName)
 }
