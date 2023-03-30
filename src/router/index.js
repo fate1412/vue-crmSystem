@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { getTables } from '@/api/customTable'
+import { isPermission } from '@/utils/validate'
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
@@ -41,13 +42,9 @@ export let constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/work/index',
     name: 'Index',
-    hidden: true,
-    children: [{
-      path: '/dashboard',
-      component: () => import('@/views/dashboard/index')
-    }]
+    hidden: true
   },
   {
     path: '/work',
@@ -128,47 +125,45 @@ export let constantRouterMap = [
       {
         path: 'customTable',
         name: 'CustomTable',
+        alwaysShow: true,
         component: () => import('@/views/table/custom'),
         meta: { title: '定制表' },
         children: []
       }
     ]
   },
-  {
-    path: '/setting',
-    component: Layout,
-    name: 'setting',
-    meta: { title: '设置', icon: 'example' },
-    children: [
-      {
-        path: '/user',
-        name: 'sysUser',
-        component: () => import('@/views/table/setting/sysUser'),
-        meta: { title: '用户管理', icon: 'table' }
-      },
-      {
-        path: '/role',
-        name: 'sysRole',
-        component: () => import('@/views/table/setting/sysRole'),
-        meta: { title: '角色管理', icon: 'table' }
-      },
-      {
-        path: '/custom',
-        name: 'custom',
-        component: () => import('@/views/table/setting/custom'),
-        meta: { title: '定制化管理', icon: 'table' }
-      },
-      {
-        path: '/flow',
-        name: 'sysFlow',
-        component: () => import('@/views/table/setting/flow'),
-        meta: { title: '流程管理', icon: 'table' }
-      }
-    ]
-  },
 
   { path: '*', redirect: '/404', hidden: true }
 ]
+
+//设置 部分路由
+const sysUser = {
+  path: '/user',
+  name: 'sysUser',
+  component: () => import('@/views/table/setting/sysUser'),
+  meta: { title: '用户管理', icon: 'table' }
+}
+
+const sysRole = {
+  path: '/role',
+  name: 'sysRole',
+  component: () => import('@/views/table/setting/sysRole'),
+  meta: { title: '角色管理', icon: 'table' }
+}
+
+const custom = {
+  path: '/custom',
+  name: 'custom',
+  component: () => import('@/views/table/setting/custom'),
+  meta: { title: '定制化管理', icon: 'table' }
+}
+
+const flow = {
+  path: '/flow',
+  name: 'sysFlow',
+  component: () => import('@/views/table/setting/flow'),
+  meta: { title: '流程管理', icon: 'table' }
+}
 
 
 const router = new Router({
@@ -192,9 +187,40 @@ export function resetRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    constantRouterMap[5].children[1].children=routes
+    constantRouterMap[5].children[1].children = routes
     router.addRoutes([constantRouterMap[5]])
   })
+}
+
+export function addSettingRoutes(user) {
+  //设置
+  //至少需要查看权限
+  const settingRoutes = {
+    path: '/setting',
+    component: Layout,
+    name: 'setting',
+    alwaysShow: true,
+    meta: { title: '设置', icon: 'example' },
+    children: []
+  }
+  let routes = []
+  if (isPermission('SysUser_Select', user)) {
+    routes.push(sysUser)
+  }
+  if (isPermission('SysRole_Select', user)) {
+    routes.push(sysRole)
+  }
+  if (isPermission('TableDict_Select', user)) {
+    routes.push(custom)
+  }
+  if (isPermission('SysFlow_Select', user)) {
+    routes.push(flow)
+  }
+  settingRoutes.children = routes
+  if (routes.length > 0) {
+    constantRouterMap[7] =settingRoutes
+    router.addRoutes([settingRoutes])
+  }
 }
 
 export function getRoutes() {
@@ -213,7 +239,7 @@ export function getRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    routerMap[5].children[1].children=routes
+    routerMap[5].children[1].children = routes
     router.addRoutes([routerMap[5]])
   })
   return constantRouterMap
