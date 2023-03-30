@@ -38,7 +38,6 @@ const user = {
 
       return new Promise((resolve, reject) => {
         login(userInfo.username, userInfo.password).then(response => {
-          console.log(response)
           const data = response.data
           setToken(data.token)
 
@@ -55,9 +54,9 @@ const user = {
       console.log("获取用户信息")
       return new Promise((resolve, reject) => {
         getInfo(state.token).then(response => {
-          const permissions = response.data
-          commit('SET_PERMISSIONS', permissions || [])
-          // commit('SET_NAME', data.name)
+          const data = response.data
+          commit('SET_PERMISSIONS', data.permissions || [])
+          commit('SET_NAME', data.name)
           // commit('SET_AVATAR', data.avatar)
           resolve(response)
         }).catch(error => {

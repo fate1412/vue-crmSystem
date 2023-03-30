@@ -3,18 +3,20 @@
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
     <breadcrumb />
     <el-dropdown class="avatar-container" trigger="click">
-      <div class="avatar-wrapper">
-        <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+      <div class="avatar-wrapper" style="display: flex">
+<!--        <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+        <img :src="'./src/icons/user.png'" class="user-avatar">
+        <div style="font-size: 30px">{{this.$store.state.user.name}}</div>
         <i class="el-icon-caret-bottom"/>
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>
-            Home
+            首 页
           </el-dropdown-item>
         </router-link>
         <el-dropdown-item divided>
-          <span style="display:block;" @click="logout">LogOut</span>
+          <span style="display:block;" @click="logout">登 出</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>

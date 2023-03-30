@@ -57,15 +57,19 @@
         <el-switch v-else-if="column.formType==='Boolean'" v-model="form[column.prop]"
                    :disabled="(!create && column.disabled ) || disabled"/>
         <!--        Input-->
-        <el-input v-else-if="column.formType==='String'" v-model="form[column.prop]"
-                  :disabled="(!create && column.disabled ) || disabled"/>
         <el-input v-else-if="column.formType==='Number'" v-model="form[column.prop]"
+                  @input="getNumber(column.prop)"
                   :disabled="(!create && column.disabled ) || disabled"/>
         <el-input v-else-if="column.formType==='Integer'" v-model="form[column.prop]"
+                  @input="getNumber(column.prop)"
                   :disabled="(!create && column.disabled ) || disabled"/>
         <el-input v-else-if="column.formType==='Double'" v-model="form[column.prop]"
+                  @input="getDouble(column.prop)"
                   :disabled="(!create && column.disabled ) || disabled"/>
         <el-input v-else-if="column.formType==='Long'" v-model="form[column.prop]"
+                  @input="getNumber(column.prop)"
+                  :disabled="(!create && column.disabled ) || disabled"/>
+        <el-input v-else v-model="form[column.prop]"
                   :disabled="(!create && column.disabled ) || disabled"/>
       </el-form-item>
 
@@ -98,8 +102,17 @@
                           :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>
-            <input v-else :disabled="(!create && column.disabled ) || disabled" type="text" v-model="scope.row[column.prop]"
-                   v-show="scope.row.isEditor"/>
+            <div v-else :disabled="(!create && column.disabled ) || disabled" v-show="scope.row.isEditor">
+              <el-input v-if="column.formType==='Number'" v-model="scope.row[column.prop]"
+                        @input="getChildNumber(column.prop,scope.$index)"/>
+              <el-input v-else-if="column.formType==='Integer'" v-model="scope.row[column.prop]"
+                        @input="getChildNumber(column.prop,scope.$index)"/>
+              <el-input v-else-if="column.formType==='Double'" v-model="scope.row[column.prop]"
+                        @input="getChildDouble(column.prop,scope.$index)"/>
+              <el-input v-else-if="column.formType==='Long'" v-model="scope.row[column.prop]"
+                        @input="getChildNumber(column.prop,scope.$index)"/>
+              <el-input v-else v-model="scope.row[column.prop]"/>
+            </div>
             <span v-if="column.formType==='Select' && column.link"
                   v-show="!scope.row.isEditor">
               {{ scope.row[column.prop + 'R'].name }}
@@ -427,8 +440,27 @@ export default {
         }
 
       }
-
       this.child.forms.push(data)
+    },
+    getNumber(prop) {
+      this.form[prop] = this.form[prop].replace(/[^0-9]/g,'')
+    },
+    getDouble(prop) {
+      this.form[prop] = this.form[prop]
+        .replace(/[^\d^.]+/g,'') // 第二步：把不是数字，不是小数点的过滤掉
+        .replace(/^0+(\d)/, '$1') // 第三步：第一位0开头，0后面为数字，则过滤掉，取后面的数字
+        .replace(/^\./, '0.') // 第四步：如果输入的第一位为小数点，则替换成 0. 实现自动补全
+        .match(/^\d*(\.?\d{0,5})/g)[0] || ''; // 第五步：最终匹配得到结果 以数字开头，只有一个小数点，而且小数点后面只能有0到5位小数"
+    },
+    getChildNumber(prop,index) {
+      this.child.forms[index][prop] = this.child.forms[index][prop].replace(/[^0-9]/g,'')
+    },
+    getChildDouble(prop,index) {
+      this.child.forms[index][prop] = this.child.forms[index][prop]
+        .replace(/[^\d^.]+/g,'') // 第二步：把不是数字，不是小数点的过滤掉
+        .replace(/^0+(\d)/, '$1') // 第三步：第一位0开头，0后面为数字，则过滤掉，取后面的数字
+        .replace(/^\./, '0.') // 第四步：如果输入的第一位为小数点，则替换成 0. 实现自动补全
+        .match(/^\d*(\.?\d{0,5})/g)[0] || ''; // 第五步：最终匹配得到结果 以数字开头，只有一个小数点，而且小数点后面只能有0到5位小数"
     }
   }
 }
