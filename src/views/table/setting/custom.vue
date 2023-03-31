@@ -247,6 +247,9 @@ export default {
     getColumnList(row) {
       this.showColumns = true
       const tableName = this.column.tableName
+      for(let i=0;i<this.column.dataSource.tool.length;i++) {
+        this.column.dataSource.tool[i].disabled = !row.custom
+      }
       this.thisTable = row
       const msg = this.columnMsg
       let data = {
@@ -374,6 +377,14 @@ export default {
           this.getColumnList(this.thisTable)
         })
         return true;
+      }
+    },
+    thisTableCustom() {
+      console.log(195198)
+      if (this.thisTable === undefined || this.thisTable === null) {
+        return true
+      } else {
+        return this.thisTable.custom
       }
     }
   }

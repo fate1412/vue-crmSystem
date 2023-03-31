@@ -5,6 +5,7 @@
         v-for="(item) in dataSource.tool"
         v-if="item.show"
         :key="item.key"
+        :disabled="item.disabled"
         :style="{'background':item.bgColor,borderColor:item.bgColor}"
         :type="item.type || 'primary'"
         class="filter-item"

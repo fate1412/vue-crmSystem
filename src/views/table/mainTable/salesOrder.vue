@@ -68,12 +68,7 @@ export default {
             prop: 'discountPrice'
           },
           {
-            label: '是否通过',
-            prop: 'isPass',
-            // width: 230
-          },
-          {
-            label: '客户id',
+            label: '客户名称',
             prop: 'customerIdR',
             link: true,
             click: this.getDetails

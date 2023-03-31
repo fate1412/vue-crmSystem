@@ -200,7 +200,7 @@ export function addSettingRoutes(user) {
     component: Layout,
     name: 'setting',
     alwaysShow: true,
-    meta: { title: '设置', icon: 'example' },
+    meta: { title: '设置', icon: 'setting' },
     children: []
   }
   let routes = []
