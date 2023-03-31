@@ -89,6 +89,7 @@ export default {
           handleSelectionChange: () => {
           },
           border: true,
+          highlightRow: true, // 选中行高亮
           isSelection: false, // 表格有多选时设置
           isOperation: true, // 表格有操作列时设置
           isIndex: false, // 列表序号

@@ -21,6 +21,7 @@
       style="width: 100%;"
       :class="{ 'no-data': !dataSource.data || !dataSource.data.length }"
       :data="dataSource.data"
+      :highlight-current-row="dataSource.highlightRow"
       :height="550"
       @row-click="getRowData"
       @selection-change="dataSource.handleSelectionChange"
