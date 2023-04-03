@@ -27,7 +27,9 @@ export default {
       'sidebar'
     ]),
     routes() {
-      addSettingRoutes(this.$store.state.user)
+      if (!this.$router.options.routes.find(route => route.name === 'setting')) {
+        addSettingRoutes(this.$store.state.user)
+      }
       return this.$router.options.routes
     },
     isCollapse() {

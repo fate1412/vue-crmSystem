@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { getTables } from '@/api/customTable'
+import { getInfo } from '@/api/login'
 import { isPermission } from '@/utils/validate'
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
@@ -25,7 +26,6 @@ import ta from "element-ui/src/locale/lang/ta";
  **/
 export let constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
   {
     path: '/form',
     component: Layout,
@@ -132,7 +132,7 @@ export let constantRouterMap = [
       }
     ]
   },
-
+  { path: '/404', component: () => import('@/views/404'), hidden: true },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
@@ -187,8 +187,8 @@ export function resetRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    constantRouterMap[5].children[1].children = routes
-    router.addRoutes([constantRouterMap[5]])
+    constantRouterMap[4].children[1].children = routes
+    router.addRoutes([constantRouterMap[4]])
   })
 }
 
@@ -218,12 +218,26 @@ export function addSettingRoutes(user) {
   }
   settingRoutes.children = routes
   if (routes.length > 0) {
-    constantRouterMap[7] =settingRoutes
+    constantRouterMap.push(settingRoutes)
     router.addRoutes([settingRoutes])
   }
 }
 
-export function getRoutes() {
+export function addSetting(fuc) {
+  let user = {}
+  getInfo().then(response => {
+    const data = response.data
+    user.permissionCodeList = data.permissions
+    console.log(123)
+    addSettingRoutes(user)
+    if (fuc !== undefined) {
+      fuc()
+    }
+  })
+
+}
+
+export function getRoutes(fuc) {
   let routerMap = constantRouterMap
   getTables().then(res => {
     const dataList = res.data
@@ -239,12 +253,32 @@ export function getRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    routerMap[5].children[1].children = routes
-    router.addRoutes([routerMap[5]])
+    routerMap[4].children[1].children = routes
+    router.addRoutes([routerMap[4]])
+    if (fuc !== undefined) {
+      fuc()
+    }
   })
   return constantRouterMap
 }
 
+//定义变量判断是否已经动态添加过，如果刷新后load永远为 0
+let load = 0
+//导航守卫
+router.beforeEach((to, from, next) => {
+  console.log("路由守卫")
+  //如果路由不存在，则重新加载一次路由
+  if (to.name === undefined && load === 0) {
+
+    getRoutes(function () {
+      addSetting(function () {
+        next({ path: to.redirectedFrom })
+      })
+    })
+    load++
+  }
+  next()
+})
 
 export default router
 

@@ -247,6 +247,12 @@ export default {
     },
     getColumnList(row) {
       this.showColumns = true
+
+      //点击同一条数据时不跳转
+      if (this.thisTable !== undefined && row.id === this.thisTable.id) {
+        return;
+      }
+
       const tableName = this.column.tableName
       for(let i=0;i<this.column.dataSource.tool.length;i++) {
         this.column.dataSource.tool[i].disabled = !row.custom

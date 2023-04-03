@@ -32,10 +32,6 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      // const data = { "token": "admin" }
-      // setToken(data.token)
-      // commit('SET_TOKEN', data.token)
-
       return new Promise((resolve, reject) => {
         login(userInfo.username, userInfo.password).then(response => {
           const data = response.data
