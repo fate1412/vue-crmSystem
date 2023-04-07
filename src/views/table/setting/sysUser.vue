@@ -155,7 +155,7 @@ export default {
             {
               label: '重置密码', // 操作名称
               type: 'warning', //为element btn属性则是按钮
-              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
+              hasPermission: isPermission('SysUser_Edit',this.$store.state.user),
               handleRow: this.showResetPasswd
             },
             {
