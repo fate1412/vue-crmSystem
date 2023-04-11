@@ -47,13 +47,7 @@ export default {
       form: {},
       // 表格配置
       dataSource: {
-        tool: [{
-          name: '新增',
-          key: 1,
-          handleClick: this.createTable,
-          show: isPermission("OrderProduct_Insert",this.$store.state.user),
-          bgColor: ''//自定义按钮背景色
-        }],
+        tool: [],
         data: [], // 表格数据
         cols: [
           {
@@ -193,18 +187,6 @@ export default {
     changeNum(pageNum) {
       this.dataSource.pageData.pageNum = pageNum
       this.getList()
-    },
-    createTable() {
-      this.$router.push({
-        name: 'Form',
-        params: {
-          goBackName: this.tableName,
-          tableName: this.tableName,
-          disabled: false,
-          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
-        }
-      })
     },
     open(message, operation) {
       this.$confirm(message, '提示', {
