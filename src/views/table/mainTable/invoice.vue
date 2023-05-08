@@ -14,7 +14,7 @@ import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
-import { getMainListByPage, deleteMainTable } from '@/api/table'
+import { getMainListByPage, deleteMainTable, invoice } from '@/api/table'
 
 export default {
   name: 'invoice',
@@ -139,8 +139,17 @@ export default {
         operation: {
           // 表格有操作列时设置
           label: '操作', // 列名
-          width: '100', // 根据实际情况给宽度
+          width: '140', // 根据实际情况给宽度
           data: [ // 功能数组
+            {
+              label: '发货确认', // 操作名称
+              type: 'primary', //为element btn属性则是按钮
+              hasPermission: isPermission('Invoice_Edit',this.$store.state.user),
+              handleRow: this.invoice,
+              show: function (index, row, label) {
+                return !row.isInvoice
+              }
+            },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
@@ -221,7 +230,7 @@ export default {
       });
     },
     deleteTable(index,row,label) {
-      this.open('此操作将永久删除该, 是否继续?', () => {
+      this.open('此操作将永久删除, 是否继续?', () => {
         let data = {
           'id': row.id
         }
@@ -229,6 +238,22 @@ export default {
           this.$message({
             type: 'success',
             message: '删除成功！'
+          });
+          this.getList();
+        });
+      });
+    },
+    invoice(index,row,label) {
+      this.open('此操作不可逆, 是否确定完成发货?', () => {
+        let data = {
+          'id': row.id
+        }
+        console.log("aaaaaaaaaaaaaaaaaa")
+        console.log(row.id)
+        return invoice(row.id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '已确定完成发货！'
           });
           this.getList();
         });

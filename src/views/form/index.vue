@@ -102,16 +102,20 @@
                           :ref="'child.' + scope.$index+'.'+index"
                           :doSelectList="getOptions" :tableName="scope.row[column.prop + 'R'].tableName"
                           v-show="scope.row.isEditor"/>
-            <div v-else :disabled="(!create && column.disabled ) || disabled" v-show="scope.row.isEditor">
+            <div v-else v-show="scope.row.isEditor">
               <el-input v-if="column.formType==='Number'" v-model="scope.row[column.prop]"
+                        :disabled="column.disabled || disabled"
                         @input="getChildNumber(column.prop,scope.$index)"/>
               <el-input v-else-if="column.formType==='Integer'" v-model="scope.row[column.prop]"
+                        :disabled="column.disabled || disabled"
                         @input="getChildNumber(column.prop,scope.$index)"/>
               <el-input v-else-if="column.formType==='Double'" v-model="scope.row[column.prop]"
+                        :disabled="column.disabled || disabled"
                         @input="getChildDouble(column.prop,scope.$index)"/>
               <el-input v-else-if="column.formType==='Long'" v-model="scope.row[column.prop]"
+                        :disabled="column.disabled || disabled"
                         @input="getChildNumber(column.prop,scope.$index)"/>
-              <el-input v-else v-model="scope.row[column.prop]"/>
+              <el-input v-else v-model="scope.row[column.prop]" :disabled="column.disabled || disabled"/>
             </div>
             <span v-if="column.formType==='Select' && column.link"
                   v-show="!scope.row.isEditor">

@@ -40,7 +40,7 @@ export default {
           name: '新增',
           key: 1,
           handleClick: this.createTable,
-          show: isPermission("StockList_Insert",this.$store.state.user),
+          show: isPermission("StockList_Insert", this.$store.state.user),
           bgColor: ''//自定义按钮背景色
         }],
         data: [], // 表格数据
@@ -74,6 +74,13 @@ export default {
           {
             label: '是否紧急',
             prop: 'isPressing',
+            setColor: function (isPressing) {
+              if (isPressing) {
+                return 'red'
+              } else {
+                return 'lightgreen'
+              }
+            }
             // width: 230
           },
           {
@@ -130,7 +137,7 @@ export default {
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              hasPermission: isPermission("StockList_Delete",this.$store.state.user),
+              hasPermission: isPermission("StockList_Delete", this.$store.state.user),
               handleRow: this.deleteTable
             }
           ]
@@ -149,9 +156,9 @@ export default {
       const pageData = this.dataSource.pageData
       const msg = this.msg
       let data = {
-        'page':  pageData.pageNum,
+        'page': pageData.pageNum,
         'pageSize': pageData.pageSize,
-        'like' : {
+        'like': {
           'id': msg.id,
         }
       }
@@ -189,8 +196,8 @@ export default {
           goBackName: this.tableName,
           tableName: this.tableName,
           disabled: false,
-          isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
+          isDelete: isPermission((toUpperCase(this.tableName) + '_Delete'), this.$store.state.user),
+          isEdit: isPermission((toUpperCase(this.tableName) + '_Edit'), this.$store.state.user)
         }
       })
     },
@@ -208,7 +215,7 @@ export default {
         });
       });
     },
-    deleteTable(index,row,label) {
+    deleteTable(index, row, label) {
       this.open('此操作将永久删除该, 是否继续?', () => {
         let data = {
           'id': row.id

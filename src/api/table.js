@@ -153,4 +153,14 @@ export function approve(data) {
   })
 }
 
+export function invoice(id) {
+  return request({
+    url: '/invoice/invoice',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
 

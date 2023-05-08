@@ -77,6 +77,13 @@ export default {
           {
             label: '发货状态',
             prop: 'invoiceStatusR',
+            setColor: function (invoiceStatusR) {
+              if (invoiceStatusR === '未发货') {
+                return 'red'
+              } else if (invoiceStatusR === '已发货') {
+                return 'lightgreen'
+              }
+            }
             // width: 230
           },
           {

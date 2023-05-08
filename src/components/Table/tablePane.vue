@@ -52,7 +52,7 @@
         >
           <template slot-scope="scope">
             <!-- 比如要输入框 显示图片等等 自己定义 -->
-            <slot :name="item.prop" :scope="scope" />
+            <slot :name="item.prop" :scope="scope"/>
           </template>
         </el-table-column>
         <!-- 需要特殊颜色显示字体-->
@@ -63,7 +63,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span :class="item.isSpecialClass(scope.row[scope.column.property])">{{ item.isSpecial(scope.row[scope.column.property]) }}</span>
+            <span :class="item.isSpecialClass(scope.row[scope.column.property])">{{
+                item.isSpecial(scope.row[scope.column.property])
+              }}</span>
           </template>
         </el-table-column>
         <!-- 需要带图标的某列，带回调事件-->
@@ -76,10 +78,11 @@
           <template slot-scope="scope">
             <span>
               <span>{{ item.filter(scope.row[scope.column.property]) }}</span>
-              <i v-if="item.icon" :class="[item.icon(scope.row[scope.column.property]),'icon-normal']" @click="item.handlerClick(scope.row)" />
+              <i v-if="item.icon" :class="[item.icon(scope.row[scope.column.property]),'icon-normal']"
+                 @click="item.handlerClick(scope.row)"/>
             </span>
             <!-- 比如要输入框 显示图片等等 自己定义 -->
-            <slot :name="item.prop" :scope="scope" />
+            <slot :name="item.prop" :scope="scope"/>
           </template>
         </el-table-column>
         <!-- 图片带tooltip -->
@@ -95,8 +98,10 @@
               title=""
               trigger="hover"
             >
-              <img class="image-popover" :src="scope.row[scope.column.property]+'?x-oss-process=image/quality,q_60'" alt="">
-              <img slot="reference" class="reference-img" :src="scope.row[scope.column.property]+'?x-oss-process=image/quality,q_10'" alt="">
+              <img class="image-popover" :src="scope.row[scope.column.property]+'?x-oss-process=image/quality,q_60'"
+                   alt="">
+              <img slot="reference" class="reference-img"
+                   :src="scope.row[scope.column.property]+'?x-oss-process=image/quality,q_10'" alt="">
             </el-popover>
           </template>
         </el-table-column>
@@ -118,9 +123,9 @@
                        scope.row[item.prop].tableName
                        )"
             >
-              {{ scope.row[item.prop].name === undefined? scope.row[item.prop] : scope.row[item.prop].name }}
+              {{ scope.row[item.prop].name === undefined ? scope.row[item.prop] : scope.row[item.prop].name }}
             </el-link>
-<!--            审批状态-->
+            <!--            审批状态-->
             <div v-else-if="item.pass">
               <div v-if="scope.row[item.prop] === '未审批'">
                 {{ '未审批' }}
@@ -128,18 +133,22 @@
               <div v-else-if="scope.row[item.prop] === '已通过'" style="color: lightgreen">
                 {{ '已通过' }}
               </div>
-              <div v-else style="color: red" >{{ '已拒绝' }}</div>
+              <div v-else style="color: red">{{ '已拒绝' }}</div>
             </div>
-<!--            波尔类型-->
+            <!--            波尔类型-->
             <div v-else>
-              <div v-if="scope.row[item.prop] === true" style="color: lightgreen">
-                {{ '是' }}
-              </div>
-              <div v-else-if="scope.row[item.prop] === false" style="color: red">
-                {{ '否' }}
+              <div v-if="scope.row[item.prop] === true || scope.row[item.prop] === false">
+                <div v-if="scope.row[item.prop] === true"
+                     :style="{color: (item.setColor === undefined? 'lightgreen' :item.setColor(scope.row[item.prop])) }">
+                  {{ '是' }}
+                </div>
+                <div v-else-if="scope.row[item.prop] === false"
+                     :style="{color: (item.setColor === undefined? 'red' :item.setColor(scope.row[item.prop])) }">
+                  {{ '否' }}
+                </div>
               </div>
               <div v-else :style="{color: (item.setColor === undefined? '' :item.setColor(scope.row[item.prop])) }">
-                {{ scope.row[item.prop]}}
+                {{ scope.row[item.prop] }}
               </div>
             </div>
           </template>
@@ -176,7 +185,8 @@
                   </el-button>
                 </template>
                 <template v-else>
-                  <i :class="[icon,item.icon]" v-bind="item" @click="item.handleRow(scope.$index, scope.row, item.label)" />
+                  <i :class="[icon,item.icon]" v-bind="item"
+                     @click="item.handleRow(scope.$index, scope.row, item.label)"/>
                 </template>
               </div>
             </div>
@@ -203,7 +213,7 @@
 </template>
 
 <script>
-import { toUpperCase , isPermission } from '@/utils/validate'
+import { toUpperCase, isPermission } from '@/utils/validate'
 import { isCustomTable } from '@/api/customTable'
 //  dataSource: {
 //          tool:[
@@ -304,14 +314,14 @@ export default {
           tableName: tableName,
           tableId: id,
           create: false,
-          isDelete: isPermission((toUpperCase(tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(tableName)+'_Edit'),this.$store.state.user)
+          isDelete: isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user),
+          isEdit: isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
         }
       }
       if (isCustom) {
         nextRoute.params.isCustom = true
-        nextRoute.params.isDelete = isPermission('Custom_Delete',this.$store.state.user)
-        nextRoute.params.isEdit = isPermission('Custom_Edit',this.$store.state.user)
+        nextRoute.params.isDelete = isPermission('Custom_Delete', this.$store.state.user)
+        nextRoute.params.isEdit = isPermission('Custom_Edit', this.$store.state.user)
       }
       this.$router.push(nextRoute)
     },
@@ -319,27 +329,32 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.page{
+.page {
   margin-top: 20px;
 }
-.btn{
+
+.btn {
   display: flex;
   justify-content: center;
 }
-.btn div{
+
+.btn div {
   margin-left: 5px;
 }
-.reference-img{
+
+.reference-img {
   width: 40px;
   height: 40px;
-  background-size:100% 100%;
+  background-size: 100% 100%;
   border-radius: 4px;
 }
-.image-popover{
+
+.image-popover {
   width: 200px;
   height: 200px;
-  background-size:100% 100%;
+  background-size: 100% 100%;
 }
+
 .icon {
   width: 25px;
   font-size: 20px;
