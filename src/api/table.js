@@ -163,4 +163,14 @@ export function invoice(id) {
   })
 }
 
+export function stockUp(id) {
+  return request({
+    url: '/stockList/stockUp',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
 
