@@ -76,19 +76,12 @@ export default {
           },
           {
             label: '发货状态',
-            prop: 'invoiceStatusR',
-            setColor: function (invoiceStatusR) {
-              if (invoiceStatusR === '未发货') {
-                return 'red'
-              } else if (invoiceStatusR === '已发货') {
-                return 'lightgreen'
-              }
-            }
+            prop: 'invoiceStatusR'
             // width: 230
           },
           {
             label: '更新时间',
-            prop: 'updateTime',
+            prop: 'updateTime'
             // width: 230
           },
           {
@@ -207,7 +200,7 @@ export default {
       });
     },
     deleteTable(index,row,label) {
-      this.open('此操作将永久删除该, 是否继续?', () => {
+      this.open('此操作将永久删除, 是否继续?', () => {
         let data = {
           'id': row.id
         }

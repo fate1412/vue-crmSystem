@@ -181,7 +181,7 @@ export default {
       });
     },
     deleteTable(index,row,label) {
-      this.open('此操作将永久删除该, 是否继续?', () => {
+      this.open('此操作将永久删除, 是否继续?', () => {
         let data = {
           'id': row.id
         }

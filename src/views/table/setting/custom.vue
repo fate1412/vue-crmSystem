@@ -76,7 +76,7 @@ export default {
           data: [], // 表格数据
           cols: [
             {
-              label: '表名',
+              label: '表名称',
               // width: 100,
               prop: 'showName'
             },
@@ -245,11 +245,12 @@ export default {
         }
       })
     },
-    getColumnList(row) {
+    getColumnList(row, reset) {
+      reset = reset || false
       this.showColumns = true
 
       //点击同一条数据时不跳转
-      if (this.thisTable !== undefined && row.id === this.thisTable.id) {
+      if (!reset && this.thisTable !== undefined && row.id === this.thisTable.id) {
         return;
       }
 
@@ -277,7 +278,7 @@ export default {
     },
     columnFilterMsg(msg) {
       this.columnMsg = msg
-      this.getColumnList(this.thisTable)
+      this.getColumnList(this.thisTable, true)
     },
     open(message, operation) {
       this.$confirm(message, '提示', {
@@ -331,7 +332,7 @@ export default {
       this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Edit'), this.$store.state.user)
     },
     deleteTable(index, row, label) {
-      this.open('此操作将永久删除该, 是否继续?', () => {
+      this.open('此操作将永久删除, 是否继续?', () => {
         let data = {
           'id': row.id
         }
@@ -348,7 +349,7 @@ export default {
       });
     },
     deleteColumn(index, row, label) {
-      this.open('此操作将永久删除该, 是否继续?', () => {
+      this.open('此操作将永久删除, 是否继续?', () => {
         let data = {
           'id': row.id
         }
@@ -357,7 +358,7 @@ export default {
             type: 'success',
             message: '删除成功！'
           });
-          this.getColumnList(this.thisTable);
+          this.getColumnList(this.thisTable, true);
         });
       });
     },
@@ -365,7 +366,7 @@ export default {
       this.drawer = false;
       this.getTableList()
       if (this.thisTable.tableName !== undefined && this.thisTable.tableName !== null) {
-        this.getColumnList(this.thisTable)
+        this.getColumnList(this.thisTable, true)
       }
       resetRoutes()
     },
@@ -381,7 +382,7 @@ export default {
           this.$message('新增成功！')
           this.listLoading = false
           this.drawer = false;
-          this.getColumnList(this.thisTable)
+          this.getColumnList(this.thisTable, true)
         })
         return true;
       }

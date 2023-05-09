@@ -121,14 +121,6 @@ export let constantRouterMap = [
             meta: { title: '备货单产品', icon: 'table' }
           }
         ]
-      },
-      {
-        path: 'customTable',
-        name: 'CustomTable',
-        alwaysShow: true,
-        component: () => import('@/views/table/custom'),
-        meta: { title: '定制表' },
-        children: []
       }
     ]
   },
@@ -173,6 +165,14 @@ const router = new Router({
 })
 
 export function resetRoutes() {
+  let customTable = {
+    path: 'customTable',
+    name: 'CustomTable',
+    alwaysShow: true,
+    component: () => import('@/views/table/custom'),
+    meta: { title: '定制表' },
+    children: []
+  }
   getTables().then(res => {
     const dataList = res.data
     let routes = []
@@ -187,11 +187,15 @@ export function resetRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    constantRouterMap[4].children[1].children = routes
-    router.addRoutes([constantRouterMap[4]])
+    if (routes.length > 0) {
+      customTable.children = routes
+      constantRouterMap[4].children[1] = customTable
+      router.addRoutes([constantRouterMap[4]])
+    }
   })
 }
 
+//通过权限组装路由
 export function addSettingRoutes(user) {
   //设置
   //至少需要查看权限
@@ -225,10 +229,10 @@ export function addSettingRoutes(user) {
 
 export function addSetting(fuc) {
   let user = {}
+  //通过获取登录信息的权限组装路由
   getInfo().then(response => {
     const data = response.data
     user.permissionCodeList = data.permissions
-    console.log(123)
     addSettingRoutes(user)
     if (fuc !== undefined) {
       fuc()
@@ -237,8 +241,18 @@ export function addSetting(fuc) {
 
 }
 
+//构建定制表路由
 export function getRoutes(fuc) {
   let routerMap = constantRouterMap
+
+  let customTable = {
+    path: 'customTable',
+    name: 'CustomTable',
+    alwaysShow: true,
+    component: () => import('@/views/table/custom'),
+    meta: { title: '定制表' },
+    children: []
+  }
   getTables().then(res => {
     const dataList = res.data
     let routes = []
@@ -253,8 +267,11 @@ export function getRoutes(fuc) {
       // CRM下的定制下
       routes.push(route)
     }
-    routerMap[4].children[1].children = routes
-    router.addRoutes([routerMap[4]])
+    if (routes.length > 0) {
+      customTable.children = routes
+      routerMap[4].children[1] = customTable
+      router.addRoutes([routerMap[4]])
+    }
     if (fuc !== undefined) {
       fuc()
     }
