@@ -44,5 +44,8 @@ export function toUpperCase(str) {
  */
 export function isPermission(permissionCode, user) {
   const permissionCodeList = user.permissionCodeList
+  if (permissionCodeList === undefined) {
+    return false
+  }
   return permissionCodeList.find(permission => permission.permissionCode === permissionCode)
 }

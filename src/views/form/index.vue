@@ -207,6 +207,10 @@ export default {
           const data = response.data;
           this.form = data.tableDataList[0];
           this.tableColumns = data.tableColumns;
+          for(let i=0; i< data.tableColumns.length; i++) {
+            let prop = data.tableColumns[i].prop
+            this.form[prop] = this.form[prop] || ''
+          }
           if (data.child === undefined || data.child === null) {
             this.child = null
           } else {
@@ -240,6 +244,10 @@ export default {
           const data = response.data;
           this.form = data.tableDataList[0];
           this.tableColumns = data.tableColumns;
+          for(let i=0; i< data.tableColumns.length; i++) {
+            let prop = data.tableColumns[i].prop
+            this.form[prop] = this.form[prop] || ''
+          }
           if (data.child === undefined || data.child === null) {
             this.child = null
           } else {
@@ -253,6 +261,10 @@ export default {
           const data = response.data;
           this.form = data.tableDataList[0];
           this.tableColumns = data.tableColumns;
+          for(let i=0; i< data.tableColumns.length; i++) {
+            let prop = data.tableColumns[i].prop
+            this.form[prop] = this.form[prop] || ''
+          }
           if (data.child === undefined || data.child === null) {
             this.child = null
           } else {
