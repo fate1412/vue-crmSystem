@@ -22,6 +22,7 @@
     >
       <my-form
         :status="detail.status"
+        :hasCustom="detail.status.hasCustom"
         :tableName="detail.tableName"
         :id="detail.id"
         :goBack="FormGoBack"
@@ -301,6 +302,7 @@ export default {
       this.detail.id = 0
       this.detail.title = '新建表'
       this.detail.status.create = true
+      this.detail.status.hasCustom = true
       this.detail.status.disabled = false
       this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
       this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Insert'), this.$store.state.user)
@@ -368,6 +370,7 @@ export default {
       if (this.thisTable.tableName !== undefined && this.thisTable.tableName !== null) {
         this.getColumnList(this.thisTable, true)
       }
+
       resetRoutes()
     },
     saveData(data) {

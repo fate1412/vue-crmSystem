@@ -175,6 +175,7 @@ export function resetRoutes() {
   }
   getTables().then(res => {
     const dataList = res.data
+    console.log(dataList)
     let routes = []
     for (let i = 0; i < dataList.length; i++) {
       let data = dataList[i]
@@ -187,11 +188,8 @@ export function resetRoutes() {
       // CRM下的定制下
       routes.push(route)
     }
-    if (routes.length > 0) {
-      customTable.children = routes
-      constantRouterMap[4].children[1] = customTable
+      constantRouterMap[4].children[1].children = routes
       router.addRoutes([constantRouterMap[4]])
-    }
   })
 }
 
