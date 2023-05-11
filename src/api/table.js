@@ -173,4 +173,14 @@ export function stockUp(id) {
   })
 }
 
+export function userLock(id) {
+  return request({
+    url: '/sysUser/lock',
+    method: 'get',
+    params: {
+      'id': id
+    }
+  })
+}
+
 

@@ -47,7 +47,7 @@ import filterPane from '@/components/Table/filterPane'
 import tablePane from '@/components/Table/tablePane'
 import myElSelect from '@/components/Table/my-el-select'
 
-import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles, resetPasswd } from '@/api/table'
+import { getMainListByPage, deleteMainTable, getOptions, getRoles, updateRoles, resetPasswd, userLock } from '@/api/table'
 import { isPermission, toUpperCase } from '@/utils/validate'
 
 export default {
@@ -156,19 +156,46 @@ export default {
               label: '重置密码', // 操作名称
               type: 'warning', //为element btn属性则是按钮
               hasPermission: isPermission('SysUser_Edit',this.$store.state.user),
-              handleRow: this.showResetPasswd
+              handleRow: this.showResetPasswd,
+              show: function (index, row, label) {
+                return !row.lockFlag
+              }
             },
             {
               label: '权限', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
-              handleRow: this.setRole
+              handleRow: this.setRole,
+              show: function (index, row, label) {
+                return !row.lockFlag
+              }
+            },
+            {
+              label: '锁定', // 操作名称
+              type: 'danger', //为element btn属性则是按钮
+              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
+              handleRow: this.userLock,
+              show: function (index, row, label) {
+                return !row.lockFlag
+              }
+            },
+            {
+              label: '解锁', // 操作名称
+              type: 'danger', //为element btn属性则是按钮
+              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
+              handleRow: this.userLock,
+              show: function (index, row, label) {
+                return row.lockFlag
+              }
             },
             {
               label: '删除', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               hasPermission: isPermission('SysUser_Delete',this.$store.state.user),
-              handleRow: this.deleteTable
+              handleRow: this.deleteTable,
+              show: function (index, row, label) {
+                return row.lockFlag
+              }
             }
           ]
         }
@@ -312,6 +339,18 @@ export default {
         });
         this.passwdVisible = false
       })
+    },
+    userLock(index, row, label) {
+      console.log(row.userId)
+      this.open(row.lockFlag?'是否解锁？':'是否锁定？', () => {
+        userLock(row.userId).then(res => {
+          this.$message({
+            type: 'success',
+            message: row.lockFlag?'解锁成功！':'锁定成功！'
+          });
+          this.getList()
+        })
+      });
     }
   }
 }
