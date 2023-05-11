@@ -122,6 +122,13 @@ export default {
           {
             label: '是否锁定',
             prop: 'lockFlag',
+            setColor: function (lockFlag) {
+              if (lockFlag) {
+                return 'red'
+              } else {
+                return 'lightgreen'
+              }
+            }
             // width: 230
           },
           {
