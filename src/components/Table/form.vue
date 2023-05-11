@@ -222,9 +222,12 @@ export default {
           const data = response.data;
           this.form.main.data = data.tableDataList[0];
           this.form.main.tableColumns = data.tableColumns;
+          //处理Select框初始值为null问题
           for(let i=0; i< data.tableColumns.length; i++) {
-            let prop = data.tableColumns[i].prop
-            this.form.main.data[prop] = this.form.main.data[prop] || ''
+            if (data.tableColumns[i].formType === 'Select') {
+              let prop = data.tableColumns[i].prop
+              this.form.main.data[prop] = this.form.main.data[prop] || ''
+            }
           }
           if (data.child === undefined || data.child === null) {
             this.form.child = null
@@ -239,6 +242,13 @@ export default {
           const data = response.data;
           this.form.main.data = data.tableDataList[0];
           this.form.main.tableColumns = data.tableColumns;
+          //处理Select框初始值为null问题
+          for(let i=0; i< data.tableColumns.length; i++) {
+            if (data.tableColumns[i].formType === 'Select') {
+              let prop = data.tableColumns[i].prop
+              this.form.main.data[prop] = this.form.main.data[prop] || ''
+            }
+          }
           for(let i=0; i< data.tableColumns.length; i++) {
             let prop = data.tableColumns[i].prop
             this.form.main.data[prop] = this.form.main.data[prop] || ''
