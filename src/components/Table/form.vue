@@ -224,9 +224,11 @@ export default {
           this.form.main.tableColumns = data.tableColumns;
           //处理Select框初始值为null问题
           for(let i=0; i< data.tableColumns.length; i++) {
+            let prop = data.tableColumns[i].prop
             if (data.tableColumns[i].formType === 'Select') {
-              let prop = data.tableColumns[i].prop
               this.form.main.data[prop] = this.form.main.data[prop] || ''
+            } else if (data.tableColumns[i].formType === 'Boolean') {
+              this.form.main.data[prop] = this.form.main.data[prop] || false
             }
           }
           if (data.child === undefined || data.child === null) {
@@ -244,14 +246,12 @@ export default {
           this.form.main.tableColumns = data.tableColumns;
           //处理Select框初始值为null问题
           for(let i=0; i< data.tableColumns.length; i++) {
-            if (data.tableColumns[i].formType === 'Select') {
-              let prop = data.tableColumns[i].prop
-              this.form.main.data[prop] = this.form.main.data[prop] || ''
-            }
-          }
-          for(let i=0; i< data.tableColumns.length; i++) {
             let prop = data.tableColumns[i].prop
-            this.form.main.data[prop] = this.form.main.data[prop] || ''
+            if (data.tableColumns[i].formType === 'Select') {
+              this.form.main.data[prop] = this.form.main.data[prop] || ''
+            } else if (data.tableColumns[i].formType === 'Boolean') {
+              this.form.main.data[prop] = this.form.main.data[prop] || false
+            }
           }
           if (data.child === undefined || data.child === null) {
             this.form.child = null
@@ -289,13 +289,13 @@ export default {
       if (this.form.child !== null) {
         data.childList = this.form.child.dataList
       }
-
       if (this.submit === undefined || !this.submit(data)) {
         if (this.create) {
           //新增
           addMainTable(this.tableName, data).then(response => {
             this.$message('新增成功！')
             this.listLoading = false
+            this.fetchData(this.tableName, this.id);
             if (this.goBack !== undefined) {
               this.goBack();
             }
@@ -316,6 +316,7 @@ export default {
           this.listLoading = false
         }
       }
+      this.fetchData(this.tableName, this.id);
       this.listLoading = false
 
     },
