@@ -156,7 +156,6 @@ export default {
     }
   },
   created() {
-    console.log("table")
     this.getList()
   },
   methods: {
@@ -175,11 +174,9 @@ export default {
         this.dataSource.loading = false
         if (res.success) {
           if (res.data.total > 0) {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.pageData.total = res.data.total
             this.dataSource.data = res.data.tableDataList
           } else {
-            // this.dataSource.cols = res.data.tableColumns
             this.dataSource.data = []
             this.dataSource.pageData.total = 0
           }
@@ -206,7 +203,8 @@ export default {
           tableName: this.tableName,
           disabled: false,
           isDelete: isPermission((toUpperCase(this.tableName) + '_Delete'), this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName) + '_Edit'), this.$store.state.user)
+          isEdit: isPermission((toUpperCase(this.tableName) + '_Edit'), this.$store.state.user),
+          isInsert: isPermission((toUpperCase(this.tableName)+'_Insert'),this.$store.state.user)
         }
       })
     },

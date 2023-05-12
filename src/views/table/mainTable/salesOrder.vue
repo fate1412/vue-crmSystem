@@ -181,7 +181,8 @@ export default {
           tableName: this.tableName,
           disabled: false,
           isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user),
+          isInsert: isPermission((toUpperCase(this.tableName)+'_Insert'),this.$store.state.user)
         }
       })
     },

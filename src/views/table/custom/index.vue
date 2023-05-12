@@ -143,7 +143,7 @@ export default {
           disabled: false,
           isDelete: isPermission('Custom_Delete',this.$store.state.user),
           isEdit: isPermission('Custom_Edit',this.$store.state.user),
-          isInsert: isPermission('Custom_Edit',this.$store.state.user),
+          isInsert: isPermission('Custom_Insert',this.$store.state.user),
           isCustom: true
         }
       })

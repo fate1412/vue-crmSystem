@@ -6,9 +6,13 @@
         <el-button @click="goBack">返回</el-button>
       </div>
       <div style=" justify-content: right;margin-bottom: 20px; float: right">
-        <div v-if="create || edit">
+        <div v-if="create">
+          <el-button v-if="this.isInsert" type="primary" @click="saveTable">提 交</el-button>
+          <el-button  @click="cancelTable">取 消</el-button>
+        </div>
+        <div v-else-if="edit">
           <el-button v-if="this.isEdit" type="primary" @click="saveTable">提 交</el-button>
-          <el-button v-if="this.isEdit" @click="cancelTable">取 消</el-button>
+          <el-button @click="cancelTable">取 消</el-button>
         </div>
         <div v-else>
           <el-button v-if="this.isEdit" type="primary" @click="saveTable">编 辑</el-button>
@@ -181,6 +185,7 @@ export default {
     this.disabled = params.disabled === undefined ? true : params.disabled;
     this.isDelete = params.isDelete || false;
     this.isEdit = params.isEdit || false;
+    this.isInsert = params.isInsert || false;
     this.isCustom = params.isCustom === undefined ? false : params.isCustom;
     this.fetchData(this.tableName, this.id)
 

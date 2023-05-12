@@ -138,7 +138,7 @@ export default {
             name: '新增',
             key: 1,
             handleClick: this.createColumn,
-            show: isPermission("Columns_Edit", this.$store.state.user),
+            show: isPermission("Columns_Insert", this.$store.state.user),
             bgColor: ''//自定义按钮背景色
           }],
           data: [], // 表格数据
@@ -198,7 +198,7 @@ export default {
                 label: '删除', // 操作名称
                 type: 'danger', //为element btn属性则是按钮
                 handleRow: this.deleteColumn,
-                hasPermission: isPermission('Columns_Edit', this.$store.state.user),
+                hasPermission: isPermission('Columns_Delete', this.$store.state.user),
                 show: function (index, row, label) {
                   return row.custom
                 }
@@ -306,6 +306,7 @@ export default {
       this.detail.status.disabled = false
       this.detail.status.isDelete = isPermission((toUpperCase(tableName) + '_Delete'), this.$store.state.user)
       this.detail.status.isEdit = isPermission((toUpperCase(tableName) + '_Insert'), this.$store.state.user)
+      this.detail.status.isInsert = isPermission((toUpperCase(tableName)+'_Insert'),this.$store.state.user)
       this.drawer = true;
     },
     createColumn() {

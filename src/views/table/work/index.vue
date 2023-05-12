@@ -109,7 +109,7 @@ export default {
               label: '同意', // 操作名称
               type: 'primary', //为element btn属性则是按钮
               handleRow: this.agree,
-              hasPermission: isPermission('Customer_Edit', this.$store.state.user),
+              hasPermission: true,
               show: function (index, row, label) {
                 if (row.pass === 0) {
                   return true
@@ -120,7 +120,7 @@ export default {
               label: '拒绝', // 操作名称
               type: 'danger', //为element btn属性则是按钮
               handleRow: this.denial,
-              hasPermission: isPermission('Customer_Edit', this.$store.state.user),
+              hasPermission: true,
               show: function (index, row, label) {
                 if (row.pass === 0) {
                   return true

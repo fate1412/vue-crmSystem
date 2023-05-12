@@ -180,7 +180,7 @@ export default {
             {
               label: '锁定', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
+              hasPermission: isPermission('SysUser_Edit',this.$store.state.user),
               handleRow: this.userLock,
               show: function (index, row, label) {
                 return !row.lockFlag
@@ -189,7 +189,7 @@ export default {
             {
               label: '解锁', // 操作名称
               type: 'danger', //为element btn属性则是按钮
-              hasPermission: isPermission('SysUserRole_Edit',this.$store.state.user),
+              hasPermission: isPermission('SysUser_Edit',this.$store.state.user),
               handleRow: this.userLock,
               show: function (index, row, label) {
                 return row.lockFlag
@@ -263,7 +263,8 @@ export default {
           tableName: this.tableName,
           disabled: false,
           isDelete: isPermission((toUpperCase(this.tableName)+'_Delete'),this.$store.state.user),
-          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user)
+          isEdit: isPermission((toUpperCase(this.tableName)+'_Edit'),this.$store.state.user),
+          isInsert: isPermission((toUpperCase(this.tableName)+'_Insert'),this.$store.state.user)
         }
       })
     },
