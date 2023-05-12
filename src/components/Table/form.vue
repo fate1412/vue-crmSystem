@@ -289,7 +289,7 @@ export default {
       if (this.form.child !== null) {
         data.childList = this.form.child.dataList
       }
-      if (this.submit === undefined || !this.submit(data)) {
+      if (this.submit === undefined || !this.submit(data,this)) {
         if (this.create) {
           //新增
           addMainTable(this.tableName, data).then(response => {
@@ -316,7 +316,6 @@ export default {
           this.listLoading = false
         }
       }
-      this.fetchData(this.tableName, this.id);
       this.listLoading = false
 
     },

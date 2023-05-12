@@ -373,7 +373,7 @@ export default {
 
       resetRoutes()
     },
-    saveData(data) {
+    saveData(data,that) {
       if (!this.useSubmit) {
         return false;
       } else {
@@ -386,6 +386,7 @@ export default {
           this.listLoading = false
           this.drawer = false;
           this.getColumnList(this.thisTable, true)
+          that.fetchData(this.detail.tableName, 0);
         })
         return true;
       }

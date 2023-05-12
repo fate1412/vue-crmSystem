@@ -148,7 +148,11 @@
                 </div>
               </div>
               <div v-else :style="{color: (item.setColor === undefined? '' :item.setColor(scope.row[item.prop])) }">
-                {{ scope.row[item.prop] }}
+<!--                {{ scope.row[item.prop] }}-->
+                {{
+                  scope.row[item.prop] === null ? scope.row[item.prop] :
+                    scope.row[item.prop].name === undefined ? scope.row[item.prop] : scope.row[item.prop].name
+                }}
               </div>
             </div>
           </template>
