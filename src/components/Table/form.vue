@@ -199,6 +199,7 @@ export default {
           dataList: [],
           baseForm: {}
         }
+        this.edit = false
         this.fetchData(this.tableName, this.id)
       },
       deep: true
@@ -219,6 +220,7 @@ export default {
     this.isDelete = status.isDelete || false;
     this.isEdit = status.isEdit || false;
     this.isInsert = status.isInsert || false;
+    this.edit = false
     this.fetchData(this.tableName, this.id)
   },
   methods: {
